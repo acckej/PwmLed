@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Hello">Hello World, Click Me!</string>
+    <string name="ApplicationName">LedController</string>
+		<string name="lblDelayText">Delay</string>
+		<string name="btnDeleteText">Delete</string>
+		<string name="btnUploadText">Upload</string>
+		<string name="btnDownloadText">Download</string>
+		<string name="btnAddText">Add</string>
+		<string name="btnPlayText">Test</string>
+		<string name="btnPlayStopText">Stop test</string>
+</resources>
