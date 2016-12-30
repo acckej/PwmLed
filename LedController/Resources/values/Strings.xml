@@ -9,4 +9,7 @@
 		<string name="btnAddText">Add</string>
 		<string name="btnPlayText">Test</string>
 		<string name="btnPlayStopText">Stop test</string>
+		<string name="tbColorProgram">Color program</string>
+		<string name="tbSpeedColor">Speed color</string>
+		<string name="tbTelemetry">Telemetry</string>
 </resources>

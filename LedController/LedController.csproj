@@ -51,8 +51,12 @@
   <ItemGroup>
     <Compile Include="Adapters\ColorProgramStepAdapter.cs" />
     <Compile Include="ColorPickerDialog.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Controls\ColorChangedEventArgs.cs" />
     <Compile Include="Controls\RoundColorPickerView.cs" />
+    <Compile Include="Fragments\ColorProgramFragment.cs" />
+    <Compile Include="Fragments\SpeedColorFragment.cs" />
+    <Compile Include="Fragments\TelemetryFragment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +99,15 @@
       <Project>{94248529-2f9f-413d-8f27-ebf8aa285e5e}</Project>
       <Name>LedController.Logic</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\color_program_tab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\speed_color_tab.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\telemetry_tab.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

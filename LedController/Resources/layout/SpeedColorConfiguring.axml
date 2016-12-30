@@ -18,6 +18,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/lblColorTest" />
             <TextView
+                android:text="Test speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblTestSpeed"
+                android:paddingTop="20dp" />
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slTestSpeed" />
+            <TextView
                 android:text="Max. speed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,7 +64,8 @@
             <SeekBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/slMuRed" />
+                android:id="@+id/slMuRed"
+                android:alpha="80" />
             <SeekBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,6 +107,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtNotMovingDelay" />
+            <TextView
+                android:text="Blink delay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblBlinkDelay"
+                android:paddingTop="20dp" />
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slBlinkDelay" />
+            <TextView
+                android:text="Color change period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblColorChange"
+                android:paddingTop="20dp" />
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/slColorChange"
+                android:paddingBottom="20dp" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:minWidth="25px"

@@ -2,56 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:minHeight="25px">
+    <FrameLayout
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout2">
-        <ListView
-            android:minWidth="25px"
-            android:minHeight="25px"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="30dp"
-            android:id="@+id/lvColorProgram" />
-        <TextView xmlns:tools="http://schemas.android.com/tools"
-            android:text="No program steps defined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtNoSteps"
-            tools:visibility="visible"
-            android:visibility="invisible"
-            android:enabled="false" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/linearLayout1"
-            android:paddingTop="30dp"
-            android:layout_marginTop="0.0dp">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/btnDownloadText"
-                android:id="@+id/btnDownload" />
-            <Button
-                android:text="@string/btnUploadText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/btnUpload" />
-            <Button
-                android:text="@string/btnAddText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/btnAdd" />
-            <Button
-                android:text="@string/btnPlayText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/btnTest" />
-        </LinearLayout>
-    </LinearLayout>
+        android:id="@+id/flMain" />
 </LinearLayout>
