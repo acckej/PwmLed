@@ -1,3 +1,5 @@
+using Java.Security;
+
 namespace LedController
 {
 	public static class Constants
@@ -38,6 +40,13 @@ namespace LedController
 			public const int DefaultBlinkDelay = 1000;
 
 			public const double Threshold = 2;
+		}
+
+		public static class Telemetry
+		{
+			public const int VoltageMultiplier = 100;
+			public const float SpeedMultiplier = (float) 3.6;
+			public const int UpdatePeriod = 500;
 		}
 	}
 }

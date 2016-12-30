@@ -81,14 +81,17 @@ namespace LedController
 			// aapt resource value: 0x7f050024
 			public const int btnGet = 2131034148;
 			
-			// aapt resource value: 0x7f050028
-			public const int btnGetTelemetry = 2131034152;
+			// aapt resource value: 0x7f050029
+			public const int btnGetTelemetry = 2131034153;
 			
 			// aapt resource value: 0x7f050007
 			public const int btnTest = 2131034119;
 			
 			// aapt resource value: 0x7f050005
 			public const int btnUpload = 2131034117;
+			
+			// aapt resource value: 0x7f050028
+			public const int cbAutoUpdate = 2131034152;
 			
 			// aapt resource value: 0x7f05000b
 			public const int flMain = 2131034123;
@@ -142,7 +145,7 @@ namespace LedController
 			public const int lvColorProgram = 2131034113;
 			
 			// aapt resource value: 0x7f050026
-			public const int progressBar1 = 2131034150;
+			public const int pbVoltage = 2131034150;
 			
 			// aapt resource value: 0x7f05000c
 			public const int scrollView1 = 2131034124;

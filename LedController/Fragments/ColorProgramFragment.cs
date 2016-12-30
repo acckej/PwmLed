@@ -23,7 +23,7 @@ namespace LedController.Fragments
 			View view = inflater.Inflate(Resource.Layout.ColorProgram, null);
 			_view = view;
 			var list = view.FindViewById<ListView>(Resource.Id.lvColorProgram);
-
+			_view.SetBackgroundColor(new Color(0, 0, 0));
 			var listAdapter = new ColorProgramStepAdapter(new List<ColorProgramStep>
 			{
 				new ColorProgramStep
@@ -88,6 +88,11 @@ namespace LedController.Fragments
 						{
 							var item = items[i];
 
+							if (!_testing)
+							{
+								break;
+							}
+
 							Activity.RunOnUiThread(() =>
 							{
 								_view.SetBackgroundColor(new Color(item.Red, item.Green, item.Blue));
@@ -97,12 +102,13 @@ namespace LedController.Fragments
 						}
 					}
 
-					Activity.RunOnUiThread(() =>
+					if (_testing)
 					{
-						_view.SetBackgroundColor(new Color(0, 0, 0));
-					});
-
-					Thread.Sleep(1000);
+						Activity.RunOnUiThread(() =>
+						{
+							_view.SetBackgroundColor(new Color(0, 0, 0));
+						});
+					}
 				});
 			}
 		}
@@ -167,6 +173,12 @@ namespace LedController.Fragments
 			ListAdapter?.Remove(position);
 
 			SetNoStepsDefined(ListAdapter != null && ListAdapter.Count == 0);
+		}
+
+		public override void OnPause()
+		{
+			_testing = false;
+			base.OnPause();
 		}
 
 		private void ListAdapterOnOnColorBoxClicked(int position)
