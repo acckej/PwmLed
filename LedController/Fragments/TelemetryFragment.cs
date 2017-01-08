@@ -1,9 +1,12 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using LedController.Bluetooth;
+using LedController.Logic;
 using LedController.Logic.Entities;
 
 namespace LedController.Fragments
@@ -22,7 +25,42 @@ namespace LedController.Fragments
 			var autoUpdate = _view.FindViewById<CheckBox>(Resource.Id.cbAutoUpdate);
 			autoUpdate.CheckedChange += AutoUpdate_CheckedChange;
 
+			var btnGet = _view.FindViewById<Button>(Resource.Id.btnGetTelemetry);
+			btnGet.Click += BtnGet_Click;
+
 			return view;
+		}
+
+		private void BtnGet_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				using (var bm = BluetoothManager.Current)
+				{
+					var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
+					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
+					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+					if (result.HasError)
+					{
+						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+					}
+					else
+					{
+						var data = result.Data as SystemInformation;
+						if (data == null)
+						{
+							throw new ApplicationException("Wrong response type");
+						}
+
+						Update(data);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+			}
 		}
 
 		private void AutoUpdate_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)

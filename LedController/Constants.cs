@@ -1,5 +1,3 @@
-using Java.Security;
-
 namespace LedController
 {
 	public static class Constants

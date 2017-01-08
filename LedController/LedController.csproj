@@ -50,10 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ColorProgramStepAdapter.cs" />
+    <Compile Include="Bluetooth\BluetoothManager.cs" />
     <Compile Include="ColorPickerDialog.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\ColorChangedEventArgs.cs" />
     <Compile Include="Controls\RoundColorPickerView.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="Fragments\ColorProgramFragment.cs" />
     <Compile Include="Fragments\SpeedColorFragment.cs" />
     <Compile Include="Fragments\TelemetryFragment.cs" />
