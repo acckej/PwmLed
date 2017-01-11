@@ -1,6 +1,5 @@
 #include "ErrorHandlingHelper.h"
-#include <cstdarg>
-#include <cstdio>
+#include <Arduino.h>
 
 void ErrorHandlingHelper::HandleError(char* message, ...)
 {

@@ -24,7 +24,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandDispatcher.h" />
     <ClInclude Include="CommandResult.h" />
-    <ClInclude Include="Constants.h" />
+    <ClInclude Include="CommandConstants.h" />
     <ClInclude Include="DataEntityFactory.h" />
     <ClInclude Include="DataEntityFactoryBase.h" />
     <ClInclude Include="DataSerializationHelper.h" />

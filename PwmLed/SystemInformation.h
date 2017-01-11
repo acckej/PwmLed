@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommandConstants.h"
+#include "Constants.h"
 #include "SerializableEntityBase.h"
 
 class SystemInformation : public SerializableEntityBase

@@ -2,10 +2,10 @@
 #include "Command.h"
 #include "ErrorHandlingHelper.h"
 #include "CommandResult.h"
-#include <cstring>
+#include <Arduino.h>
 
-CommandDispatcher::CommandDispatcher(GetSysInfoDelegate getSysInfo, 
-	ApplyColorProgramDelegate applyColorProgram, 
+CommandDispatcher::CommandDispatcher(GetSysInfoDelegate getSysInfo,
+	ApplyColorProgramDelegate applyColorProgram,
 	ApplySpeedColorProgramDelegate applySpeedColorProgram,
 	GetCurrentSpeedColorProgramDelegate getSpeedColorProgram,
 	DataEntityFactoryBase* dataEntityFactory)
@@ -24,7 +24,7 @@ CommandDispatcher::~CommandDispatcher()
 CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 {
 	CommandResult* result;
-	unsigned char commandId ;
+	unsigned char commandId;
 
 	Command cmd(packet, _dataEntityFactory);
 
@@ -74,7 +74,7 @@ CommandResult* CommandDispatcher::GetResponse(SerializableEntityBase* data, unsi
 	auto buf = new char[dataLength];
 
 	data->WriteDataToBuffer(buf);
-	
+
 	return new CommandResult(commandId, buf, dataLength, false);
 }
 

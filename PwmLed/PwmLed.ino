@@ -1,7 +1,6 @@
 //#include <LiquidCrystal_I2C.h>
 #include "Constants.h"
 
-
 volatile unsigned long _lastUpdate = 0;
 volatile unsigned long _debounceDelay = 100;
 volatile unsigned long _msBetweenTicks;

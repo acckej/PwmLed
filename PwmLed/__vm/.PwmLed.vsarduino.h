@@ -12,7 +12,6 @@
 #define _VSARDUINO_H_
 #define __AVR_ATmega328p__
 #define __AVR_ATmega328P__
-#define _VMDEBUG 1
 #define F_CPU 16000000L
 #define ARDUINO 10608
 #define ARDUINO_AVR_PRO
@@ -65,5 +64,32 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 #include <..\PwmLed\PwmLed.ino>
+#include <..\PwmLed\ColorProgram.cpp>
+#include <..\PwmLed\ColorProgram.h>
+#include <..\PwmLed\ColorProgramStep.cpp>
+#include <..\PwmLed\ColorProgramStep.h>
+#include <..\PwmLed\Command.cpp>
+#include <..\PwmLed\Command.h>
+#include <..\PwmLed\CommandConstants.h>
+#include <..\PwmLed\CommandDispatcher.cpp>
+#include <..\PwmLed\CommandDispatcher.h>
+#include <..\PwmLed\CommandResult.cpp>
+#include <..\PwmLed\CommandResult.h>
 #include <..\PwmLed\Constants.h>
+#include <..\PwmLed\DataEntityFactory.cpp>
+#include <..\PwmLed\DataEntityFactory.h>
+#include <..\PwmLed\DataEntityFactoryBase.cpp>
+#include <..\PwmLed\DataEntityFactoryBase.h>
+#include <..\PwmLed\DataSerializationHelper.cpp>
+#include <..\PwmLed\DataSerializationHelper.h>
+#include <..\PwmLed\DeserializableEntityBase.cpp>
+#include <..\PwmLed\DeserializableEntityBase.h>
+#include <..\PwmLed\ErrorHandlingHelper.cpp>
+#include <..\PwmLed\ErrorHandlingHelper.h>
+#include <..\PwmLed\SerializableEntityBase.cpp>
+#include <..\PwmLed\SerializableEntityBase.h>
+#include <..\PwmLed\SpeedColorProgramSettings.cpp>
+#include <..\PwmLed\SpeedColorProgramSettings.h>
+#include <..\PwmLed\SystemInformation.cpp>
+#include <..\PwmLed\SystemInformation.h>
 #endif

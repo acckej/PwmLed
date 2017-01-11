@@ -1,5 +1,5 @@
 #pragma once
-#include "../CommandLibrary/Constants.h"
+#include "../CommandLibrary/CommandConstants.h"
 #include <string>
 
 const char Hexmap[] = { '0', '1', '2', '3', '4', '5', '6', '7',

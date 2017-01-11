@@ -33,6 +33,11 @@ namespace LedController.Fragments
 
 		private void BtnGet_Click(object sender, EventArgs e)
 		{
+			DownloadAndUpdate();
+		}
+
+		private void DownloadAndUpdate()
+		{
 			try
 			{
 				using (var bm = BluetoothManager.Current)
@@ -73,6 +78,7 @@ namespace LedController.Fragments
 				get.Enabled = false;
 				_updater = new Task(() =>
 				{
+					DownloadAndUpdate();
 					Thread.Sleep(Constants.Telemetry.UpdatePeriod);
 				}, _autoUpdate.Token);
 				_updater.Start();
