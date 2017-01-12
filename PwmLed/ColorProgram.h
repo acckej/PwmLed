@@ -1,7 +1,7 @@
 #pragma once
 #include "ColorProgramStep.h"
 #include "DeserializableEntityBase.h"
-#include "Constants.h"
+#include "CommandConstants.h"
 #include "SerializableEntityBase.h"
 
 #define NumberOfStepsMax 32

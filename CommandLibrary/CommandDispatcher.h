@@ -1,10 +1,8 @@
 #pragma once
 
 #include "SerializableEntityBase.h"
-#include "DeserializableEntityBase.h"
 #include "DataEntityFactoryBase.h"
-
-class CommandResult;
+#include "CommandResult.h"
 
 typedef SerializableEntityBase* (*GetSysInfoDelegate)();
 typedef void (*ApplyColorProgramDelegate)(DeserializableEntityBase*);

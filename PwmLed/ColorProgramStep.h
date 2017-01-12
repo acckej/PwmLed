@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeserializableEntityBase.h"
-#include "Constants.h"
+#include "CommandConstants.h"
 #include "SerializableEntityBase.h"
 
 class ColorProgramStep : public DeserializableEntityBase, public SerializableEntityBase

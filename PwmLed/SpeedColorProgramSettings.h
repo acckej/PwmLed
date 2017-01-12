@@ -2,7 +2,6 @@
 
 #include "DeserializableEntityBase.h"
 #include "SerializableEntityBase.h"
-#include "Constants.h"
 
 class SpeedColorProgramSettings : public DeserializableEntityBase, public SerializableEntityBase
 {

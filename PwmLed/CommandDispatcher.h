@@ -3,8 +3,8 @@
 #include "SerializableEntityBase.h"
 #include "DeserializableEntityBase.h"
 #include "DataEntityFactoryBase.h"
+#include "CommandResult.h"
 
-class CommandResult;
 
 typedef SerializableEntityBase* (*GetSysInfoDelegate)();
 typedef void (*ApplyColorProgramDelegate)(DeserializableEntityBase*);

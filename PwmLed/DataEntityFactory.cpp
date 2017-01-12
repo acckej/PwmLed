@@ -2,6 +2,7 @@
 #include "DataSerializationHelper.h"
 #include "SpeedColorProgramSettings.h"
 #include "ErrorHandlingHelper.h"
+#include "CommandConstants.h"
 #include "ColorProgram.h"
 
 DeserializableEntityBase* DataEntityFactory::CreateFromBuffer(char* buffer)

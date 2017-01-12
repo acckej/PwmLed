@@ -1,5 +1,15 @@
 //#include <LiquidCrystal_I2C.h>
 #include "Constants.h"
+#include "CommandConstants.h"
+#include <SoftwareSerial.h>
+#include "CommandDispatcher.h"
+#include "DataEntityFactory.h"
+#include "ErrorHandlingHelper.h"
+#include "SystemInformation.h"
+#include "EepromHelper.h"
+#include "EEPROM.h"
+
+SoftwareSerial BTserial(BT_RX_PIN, BT_TX_PIN); // RX | TX
 
 volatile unsigned long _lastUpdate = 0;
 volatile unsigned long _debounceDelay = 100;
@@ -12,21 +22,41 @@ double _currentSpeed;
 unsigned char _blinkHigh = 0;
 boolean _signalHigh = true;
 
+int _notMovingDelay = NotMovingDelay;
+int _colorChangePeriod = ColorChangePeriod;
+int _blinkDelay = BlinkDelay;
+int _idleDelay = IdleDelay;
+
+double _distance = Distance;
+double _topSpeed = TopSpeed;
+
+double _muRed = MuRed;
+double _muGreen = MuGreen;
+double _muBlue = MuBlue;
+
+double _sigmaRed = SigmaRed;
+double _sigmaGreen = SigmaGreen;
+double _sigmaBlue = SigmaBlue;
+
+DataEntityFactory _factory;
+CommandDispatcher _dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &_factory);
+
+enum Mode { SpeedColorMode, ColorProgramMode};
+Mode _currentMode = SpeedColorMode;
+
+void(*resetFunc) (void) = nullptr;
+
 void setup() 
 {	
 	//Serial.begin(9600);
 
 	attachInterrupt(0, update, RISING);
+	BTserial.begin(9600);
+	ErrorHandlingHelper::ErrorHandler = HandleError;
 }
 
 void loop()
 {	
-	/*union 
-	{
-		double d;
-		char bytes[sizeof(double)];
-	} u;*/		
-	
 	float voltage = getVoltage();
 	//*
 	if(voltage <= THRESHOLD_VOLTAGE)
@@ -42,6 +72,61 @@ void loop()
 	setDutyBlink();
 	////work();	
 }
+
+SerializableEntityBase* GetSysInfo()
+{
+	float voltage = getVoltage();
+	auto result = new SystemInformation(voltage, _currentSpeed);
+	return result;
+}
+
+void ApplyColorProgram(DeserializableEntityBase* entity)
+{
+	EepromHelper::SaveColorProgramToEeprom(entity);
+	_currentMode = ColorProgramMode;	
+}
+
+void HandleError(char *message)
+{
+	BTserial.write(message);
+	resetFunc();
+}
+
+void ApplySpeedColorProgram(DeserializableEntityBase* entity)
+{
+	EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
+	_currentMode = SpeedColorMode;
+}
+
+SerializableEntityBase* GetCurrentSpeedColorProgram()
+{
+	return nullptr;
+}
+
+void ReceiveCommand()
+{
+	if(BTserial.available())
+	{
+		char buffer[READ_BUFFER_SIZE];
+		auto size = BTserial.readBytes(buffer, READ_BUFFER_SIZE);
+
+		if(size > 0)
+		{
+			auto result = _dispatcher.ReceivePacket(buffer);
+
+			if(result != nullptr)
+			{
+				auto sendBuf = new char[result->GetDataSize()];
+				result->WriteDataToBuffer(sendBuf);
+
+				delete result;
+				BTserial.write(sendBuf, result->GetDataSize());
+				delete sendBuf;
+			}
+		}
+	}
+}
+
 
 void setDutyBlink()
 {
@@ -88,9 +173,9 @@ void work()
 	_timestamp = currentTime;
 
 	//_currentSpeed = period / 1000 * _value * DISTANCE;	
-	_currentSpeed = _timestamp - _lastUpdate > NOT_MOVING_DELAY ?
+	_currentSpeed = _timestamp - _lastUpdate > _notMovingDelay ?
 		0 :
-		DISTANCE / static_cast<double>(static_cast<double>(_msBetweenTicks) / MS_COEF) / static_cast<double>(2000);
+		_distance / static_cast<double>(static_cast<double>(_msBetweenTicks) / MS_COEF) / static_cast<double>(2000);
 
 	if (_currentSpeed > 0)
 	{
@@ -109,7 +194,7 @@ void work()
 		analogWrite(BLUE_PIN, 0);
 	}
 
-	delay(COLOR_CHANGE_PERIOD);
+	delay(_colorChangePeriod);
 }
 
 void update()
@@ -126,19 +211,15 @@ void update()
 
 void setColor(double currentSpeed, double threshold)
 {
-	double muGreen = TOP_SPEED / 2;
-	double muRed = TOP_SPEED / 4;
-	double muBlue = 0;
-
-	double sigmaGreen = sqrt(TOP_SPEED / 4);
-	double sigmaRed = sqrt(TOP_SPEED / 4);
-	double sigmaBlue = sqrt(TOP_SPEED / 2);
+	double sigmaGreen = sqrt(_sigmaGreen);
+	double sigmaRed = sqrt(_sigmaRed);
+	double sigmaBlue = sqrt(_sigmaBlue);
 
 	double range = 255 - threshold;
 	
-	int red = threshold + range * (1 - gaussian(sigmaRed, muRed, currentSpeed));
-	int green = threshold + range * gaussian(sigmaGreen, muGreen, currentSpeed);
-	int blue = threshold + range * gaussian(sigmaBlue, muBlue, currentSpeed);
+	int red = threshold + range * (1 - gaussian(sigmaRed, _muRed, currentSpeed));
+	int green = threshold + range * gaussian(sigmaGreen, _muGreen, currentSpeed);
+	int blue = threshold + range * gaussian(sigmaBlue, _muBlue, currentSpeed);
 
 	if (blue > 255)
 	{
@@ -184,7 +265,7 @@ void setColor(double currentSpeed, double threshold)
 
 double gaussian(double sigma, double mu, double x)
 {
-	double result = 1 / sigma * sqrt(2 * PI) * exp(-1 * pow(x - mu, 2) / 2 * pow(sigma, 2));
+	auto result = 1 / sigma * sqrt(2 * PI) * exp(-1 * pow(x - mu, 2) / 2 * pow(sigma, 2));
 
 	return result;
 }

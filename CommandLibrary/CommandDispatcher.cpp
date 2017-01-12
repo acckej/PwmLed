@@ -2,7 +2,14 @@
 #include "Command.h"
 #include "ErrorHandlingHelper.h"
 #include "CommandResult.h"
+
+#ifdef Test
 #include <cstring>
+#endif
+
+#ifdef Arduino
+#include <Arduino.h>
+#endif
 
 CommandDispatcher::CommandDispatcher(GetSysInfoDelegate getSysInfo, 
 	ApplyColorProgramDelegate applyColorProgram, 

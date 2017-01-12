@@ -1,8 +1,22 @@
 #pragma once
 
+#define Test
+
+#ifdef Test
+
 typedef __int16 ArduinoInt;
 typedef float ArduinoDouble;
 typedef __int16 ArduinoSize;
+
+#endif
+
+#ifdef Arduino
+
+typedef __int16 ArduinoInt;
+typedef float ArduinoDouble;
+typedef __int16 ArduinoSize;
+
+#endif
 
 const unsigned char SystemInformationPacketId = 1;
 const unsigned char SpeedColorProgramPacketId = 3;

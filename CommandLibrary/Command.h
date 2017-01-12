@@ -1,8 +1,7 @@
 #pragma once
 
 #include "DeserializableEntityBase.h"
-
-class DataEntityFactoryBase;
+#include "DataEntityFactoryBase.h"
 
 class Command 
 {

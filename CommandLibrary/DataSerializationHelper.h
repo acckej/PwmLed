@@ -1,4 +1,12 @@
+#include "CommandConstants.h"
+
+#ifdef Test
 #include <cstring>
+#endif
+
+#ifdef Arduino
+#include <Arduino.h>
+#endif
 
 #pragma once
 template <class T> class DataSerializationHelper

@@ -1,10 +1,18 @@
-#pragma once
-#include <Arduino.h>
+#include "CommandConstants.h"
 
+#ifdef Test
+#include <cstring>
+#endif
+
+#ifdef Arduino
+#include <Arduino.h>
+#endif
+
+#pragma once
 template <class T> class DataSerializationHelper
 {
 public:
-	static char* WriteDataToArray(char* array, T value);	
+	static char* WriteDataToArray(char* array, T value);
 
 	static T GetDataFromArray(char** array);
 
@@ -21,9 +29,9 @@ char* DataSerializationHelper<T>::WriteDataToArray(char* array, T value)
 
 template <class T>
 T DataSerializationHelper<T>::GetDataFromArray(char** array)
-{	
+{
 	T result = **(reinterpret_cast<T**>(array));
-	*array+= sizeof(T);
+	*array += sizeof(T);
 	return result;
 }
 
