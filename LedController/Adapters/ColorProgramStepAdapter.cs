@@ -73,6 +73,8 @@ namespace LedController.Adapters
 			return view;
 		}
 
+		public ColorProgramStep[] Steps => _steps.ToArray();
+
 		public override int Count => _steps.Count;
 
 		public override ColorProgramStep this[int position] => _steps[position];

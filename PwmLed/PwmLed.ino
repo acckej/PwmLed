@@ -44,28 +44,42 @@ CommandDispatcher _dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProg
 enum Mode { SpeedColorMode, ColorProgramMode};
 Mode _currentMode = SpeedColorMode;
 
+ColorProgram* _currentColorProgram;
+
 void(*resetFunc) (void) = nullptr;
+
 
 void setup() 
 {	
 	//Serial.begin(9600);
 
-	attachInterrupt(0, update, RISING);
+	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
+	UpdateSpeedColorSettings(savedSpeedColor);
+	if(savedSpeedColor != nullptr)
+	{
+		delete savedSpeedColor;
+	}
+
+	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
+
+	attachInterrupt(0, Update, RISING);
 	BTserial.begin(9600);
 	ErrorHandlingHelper::ErrorHandler = HandleError;
 }
 
 void loop()
 {	
-	float voltage = getVoltage();
+	ReceiveCommand();
+
+	float voltage = GetVoltage();
 	//*
 	if(voltage <= THRESHOLD_VOLTAGE)
 	{		
-		lowVoltageBlink();
+		LowVoltageBlink();
 	}
 	else
 	{		
-		work();
+		Work();
 	}
 	//*/
 
@@ -75,15 +89,24 @@ void loop()
 
 SerializableEntityBase* GetSysInfo()
 {
-	float voltage = getVoltage();
-	auto result = new SystemInformation(voltage, _currentSpeed);
-	return result;
+	float voltage = GetVoltage();
+	SystemInformation result(voltage, _currentSpeed);
+	return &result;
 }
 
 void ApplyColorProgram(DeserializableEntityBase* entity)
 {
-	EepromHelper::SaveColorProgramToEeprom(entity);
-	_currentMode = ColorProgramMode;	
+	auto program = EepromHelper::SaveColorProgramToEeprom(entity);
+
+	if (program != nullptr)
+	{
+		if(_currentColorProgram != nullptr)
+		{
+			delete _currentColorProgram;
+		}
+		_currentColorProgram = program;
+		_currentMode = ColorProgramMode;
+	}
 }
 
 void HandleError(char *message)
@@ -94,13 +117,63 @@ void HandleError(char *message)
 
 void ApplySpeedColorProgram(DeserializableEntityBase* entity)
 {
-	EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
-	_currentMode = SpeedColorMode;
+	auto updated = EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
+
+	if (updated != nullptr)
+	{
+		_distance = updated->GetDistance();
+		_sigmaBlue = updated->GetSigmaBlue();
+		_sigmaGreen = updated->GetSigmaGreen();
+		_sigmaRed = updated->GetSigmaRed();
+		_blinkDelay = updated->GetBlinkDelay();
+		_colorChangePeriod = updated->GetColorChangePeriod();
+		_muBlue = updated->GetMuBlue();
+		_muRed = updated->GetMuRed();
+		_muGreen = updated->GetMuGreen();
+		_notMovingDelay = updated->GetNotMovingDelay();
+		_topSpeed = updated->GetTopSpeed();
+
+		_currentMode = SpeedColorMode;
+	}
+}
+
+void UpdateSpeedColorSettings(SpeedColorProgramSettings* updated)
+{
+	if (updated != nullptr)
+	{
+		_distance = updated->GetDistance();
+		_sigmaBlue = updated->GetSigmaBlue();
+		_sigmaGreen = updated->GetSigmaGreen();
+		_sigmaRed = updated->GetSigmaRed();
+		_blinkDelay = updated->GetBlinkDelay();
+		_colorChangePeriod = updated->GetColorChangePeriod();
+		_muBlue = updated->GetMuBlue();
+		_muRed = updated->GetMuRed();
+		_muGreen = updated->GetMuGreen();
+		_notMovingDelay = updated->GetNotMovingDelay();
+		_topSpeed = updated->GetTopSpeed();
+
+		_currentMode = SpeedColorMode;
+	}
 }
 
 SerializableEntityBase* GetCurrentSpeedColorProgram()
 {
-	return nullptr;
+	SpeedColorProgramSettings settings;
+	settings.SetData(_distance,
+		_topSpeed,
+		_notMovingDelay,
+		_colorChangePeriod,
+		_blinkDelay,
+		_idleDelay,
+		_muRed,
+		_muGreen,
+		_muBlue,
+		_sigmaRed,
+		_sigmaGreen,
+		_sigmaBlue);
+
+	return &settings;
 }
 
 void ReceiveCommand()
@@ -127,7 +200,6 @@ void ReceiveCommand()
 	}
 }
 
-
 void setDutyBlink()
 {
 	if (_signalHigh)
@@ -142,7 +214,7 @@ void setDutyBlink()
 	}
 }
 
-void lowVoltageBlink()
+void LowVoltageBlink()
 {
 	if(_blinkHigh == 255)
 	{
@@ -160,13 +232,45 @@ void lowVoltageBlink()
 	delay(BLINK_DELAY);
 }
 
-float getVoltage()
+float GetVoltage()
 {
-	int reading = analogRead(VOLTAGE_PIN);
+	auto reading = analogRead(VOLTAGE_PIN);
 	return static_cast<float>(reading) / VOLTAGE_DELIMITER;
 }
 
-void work()
+void Work()
+{
+	if (_currentMode == SpeedColorMode)
+	{
+		GetSpeedAndColor();
+	}
+	else
+	{
+		PlayColorProgram();
+	}
+}
+
+void PlayColorProgram()
+{
+	if(_currentColorProgram == nullptr || _currentColorProgram->GetNumberOfSteps() == 0)
+	{
+		return;
+	}
+
+	do
+	{
+		auto step = _currentColorProgram->GetNextStep();
+
+		analogWrite(RED_PIN, step.Red());
+		analogWrite(GREEN_PIN, step.Green());
+		analogWrite(BLUE_PIN, step.Blue());
+
+		delay(step.GetDelay());
+
+	} while (!_currentColorProgram->IsLastStep());
+}
+
+void GetSpeedAndColor()
 {
 	unsigned long currentTime = millis();
 	//unsigned long period = currentTime - _timestamp;
@@ -179,7 +283,7 @@ void work()
 
 	if (_currentSpeed > 0)
 	{
-		setColor(_currentSpeed, 2);		
+		SetColor(_currentSpeed, COLOR_THRESHOLD);
 	}
 	else
 	{
@@ -197,7 +301,7 @@ void work()
 	delay(_colorChangePeriod);
 }
 
-void update()
+void Update()
 {
 	unsigned long current = millis();
 	unsigned long diff = current - _lastUpdate;
@@ -209,7 +313,7 @@ void update()
 	}
 }
 
-void setColor(double currentSpeed, double threshold)
+void SetColor(double currentSpeed, double threshold)
 {
 	double sigmaGreen = sqrt(_sigmaGreen);
 	double sigmaRed = sqrt(_sigmaRed);
@@ -217,9 +321,9 @@ void setColor(double currentSpeed, double threshold)
 
 	double range = 255 - threshold;
 	
-	int red = threshold + range * (1 - gaussian(sigmaRed, _muRed, currentSpeed));
-	int green = threshold + range * gaussian(sigmaGreen, _muGreen, currentSpeed);
-	int blue = threshold + range * gaussian(sigmaBlue, _muBlue, currentSpeed);
+	int red = threshold + range * (1 - Gaussian(sigmaRed, _muRed, currentSpeed));
+	int green = threshold + range * Gaussian(sigmaGreen, _muGreen, currentSpeed);
+	int blue = threshold + range * Gaussian(sigmaBlue, _muBlue, currentSpeed);
 
 	if (blue > 255)
 	{
@@ -263,7 +367,7 @@ void setColor(double currentSpeed, double threshold)
 }
 
 
-double gaussian(double sigma, double mu, double x)
+double Gaussian(double sigma, double mu, double x)
 {
 	auto result = 1 / sigma * sqrt(2 * PI) * exp(-1 * pow(x - mu, 2) / 2 * pow(sigma, 2));
 

@@ -8,6 +8,8 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using LedController.Adapters;
+using LedController.Bluetooth;
+using LedController.Logic;
 using LedController.Logic.Entities;
 
 namespace LedController.Fragments
@@ -52,9 +54,6 @@ namespace LedController.Fragments
 
 			var uploadButton = view.FindViewById<Button>(Resource.Id.btnUpload);
 			uploadButton.Click += UploadButton_Click;
-
-			var downloadButton = view.FindViewById<Button>(Resource.Id.btnDownload);
-			downloadButton.Click += DownloadButton_Click;
 
 			var testButton = view.FindViewById<Button>(Resource.Id.btnTest);
 			testButton.Click += TestButton_Click;
@@ -113,13 +112,36 @@ namespace LedController.Fragments
 			}
 		}
 
-		private void DownloadButton_Click(object sender, EventArgs e)
-		{
-		}
-
 		private void UploadButton_Click(object sender, EventArgs e)
 		{
-			//BluetoothAdapter ba = BluetoothAdapter.DefaultAdapter;
+			try
+			{
+				using (var bm = BluetoothManager.Current)
+				{
+					if (_listAdapter.Count == 0)
+					{
+						return;
+					}
+					var program = new ColorProgram();
+					foreach (var step in _listAdapter.Steps)
+					{
+						program.Add(step);
+					}
+
+					var cmd = new Command(Logic.Constants.CommandType.UploadColorProgramCommandId, program);
+					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
+					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+					if (result.HasError)
+					{
+						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+			}
 		}
 
 		private void AddButton_Click(object sender, EventArgs e)

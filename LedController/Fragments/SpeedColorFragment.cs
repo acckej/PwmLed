@@ -5,6 +5,8 @@ using Android.Graphics;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using LedController.Bluetooth;
+using LedController.Logic;
 using LedController.Logic.Entities;
 using static LedController.Constants.SpeedColor;
 
@@ -59,7 +61,69 @@ namespace LedController.Fragments
 
 			SetDefaultValues();
 
+			var btnGet = view.FindViewById<Button>(Resource.Id.btnGetSpeedColor);
+			var btnUpload = view.FindViewById<Button>(Resource.Id.btnUploadSpeedColor);
+
+			btnGet.Click += BtnGet_Click;
+			btnUpload.Click += BtnUpload_Click;
+
 			return view;
+		}
+
+		private void BtnUpload_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				using (var bm = BluetoothManager.Current)
+				{
+					var settings = FillDataEntityFromUi();
+
+					var cmd = new Command(Logic.Constants.CommandType.UploadSpeedColorProgramCommandId, settings);
+					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
+					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+					if (result.HasError)
+					{
+						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+			}
+		}
+
+		private void BtnGet_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				using (var bm = BluetoothManager.Current)
+				{
+					var cmd = new Command(Logic.Constants.CommandType.GetSpeedColorProgramCommandId);
+					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
+					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+					if (result.HasError)
+					{
+						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+					}
+					else
+					{
+						var data = result.Data as SpeedColorProgramSettings;
+						if (data == null)
+						{
+							throw new ApplicationException("Wrong response type");
+						}
+
+						FillUiFromDataEntity(data);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+			}
 		}
 
 		private void Speed_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -220,13 +284,56 @@ namespace LedController.Fragments
 			notMovingDelay.Text = settings.NotMovingDelay.ToString();
 
 			var wheelCircle = _view.FindViewById<EditText>(Resource.Id.txtDistance);
-			wheelCircle.Text = (settings.Distance * CoefficientsSliderMultiplier).ToString(CultureInfo.InvariantCulture);
+			wheelCircle.Text = settings.Distance.ToString(CultureInfo.InvariantCulture);
 
 			var blink = _view.FindViewById<SeekBar>(Resource.Id.slBlinkDelay);
 			blink.Progress = settings.BlinkDelay;
 
 			var colorChange = _view.FindViewById<SeekBar>(Resource.Id.slColorChange);
 			colorChange.Progress = settings.ColorChangePeriod;
+		}
+
+		private SpeedColorProgramSettings FillDataEntityFromUi()
+		{
+			var result = new SpeedColorProgramSettings();
+
+			var sigmaRed = _view.FindViewById<SeekBar>(Resource.Id.slSigmaRed);
+			result.SigmaRed = (float)sigmaRed.Progress / CoefficientsSliderMultiplier;
+
+			var sigmaGreen = _view.FindViewById<SeekBar>(Resource.Id.slSigmaGreen);
+			result.SigmaGreen = (float)sigmaGreen.Progress / CoefficientsSliderMultiplier;
+
+			var sigmaBlue = _view.FindViewById<SeekBar>(Resource.Id.slSigmaBlue);
+			result.SigmaBlue = (float)sigmaBlue.Progress / CoefficientsSliderMultiplier;
+
+			var muRed = _view.FindViewById<SeekBar>(Resource.Id.slMuRed);
+			result.MuRed = (float)muRed.Progress / CoefficientsSliderMultiplier;
+
+			var muGreen = _view.FindViewById<SeekBar>(Resource.Id.slMuGreen);
+			result.MuGreen = (float)muGreen.Progress / CoefficientsSliderMultiplier;
+
+			var muBlue = _view.FindViewById<SeekBar>(Resource.Id.slMuBlue);
+			result.MuBlue = (float)muBlue.Progress / CoefficientsSliderMultiplier;
+
+			var maxSpeed = _view.FindViewById<SeekBar>(Resource.Id.slMaxSpeed);
+			result.TopSpeed = (float)maxSpeed.Progress / SpeedSliderMultiplier;
+
+			var idleDelay = _view.FindViewById<EditText>(Resource.Id.txtIdleDelay);
+			result.IdleDelay = short.Parse(idleDelay.Text);
+
+			var notMovingDelay = _view.FindViewById<EditText>(Resource.Id.txtNotMovingDelay);
+			result.NotMovingDelay = short.Parse(notMovingDelay.Text);
+
+			var wheelCircle = _view.FindViewById<EditText>(Resource.Id.txtDistance);
+			result.Distance = float.Parse(wheelCircle.Text);
+
+			var blink = _view.FindViewById<SeekBar>(Resource.Id.slBlinkDelay);
+			result.BlinkDelay = (short)blink.Progress;
+
+			var colorChange = _view.FindViewById<SeekBar>(Resource.Id.slColorChange);
+			result.ColorChangePeriod = (short)colorChange.Progress;
+
+			return result;
 		}
 	}
 }

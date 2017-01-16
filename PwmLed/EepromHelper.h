@@ -7,8 +7,8 @@
 class EepromHelper
 {
 public:
-	static void SaveColorProgramToEeprom(DeserializableEntityBase* entity);
-	static void SaveSpeedColorSettingsToEeprom(DeserializableEntityBase* entity);
+	static ColorProgram* SaveColorProgramToEeprom(DeserializableEntityBase* entity);
+	static SpeedColorProgramSettings* SaveSpeedColorSettingsToEeprom(DeserializableEntityBase* entity);
 
 	static SpeedColorProgramSettings* RestoreSpeedColorFromEeprom();
 	static ColorProgram* RestoreColorProgramFromEeprom();

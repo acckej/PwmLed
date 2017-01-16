@@ -139,12 +139,12 @@
                     android:text="Get"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/btnGet" />
+                    android:id="@+id/btnGetSpeedColor" />
                 <Button
                     android:text="Upload"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btnUpload" />
+                    android:id="@+id/btnUploadSpeedColor" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

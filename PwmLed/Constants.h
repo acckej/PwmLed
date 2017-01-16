@@ -10,6 +10,7 @@
 
 #define DEBOUNCE_DELAY 100
 #define MS_COEF static_cast<double>(1000)
+#define COLOR_THRESHOLD static_cast<double>(2)
 
 #define VOLTAGE_PIN 4
 #define VOLTAGE_COEF 0.345
