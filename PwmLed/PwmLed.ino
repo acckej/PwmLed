@@ -20,8 +20,6 @@ unsigned long _timestamp;
 double _currentSpeed;
 
 unsigned char _blinkHigh = 0;
-boolean _signalHigh = true;
-
 int _notMovingDelay = NotMovingDelay;
 int _colorChangePeriod = ColorChangePeriod;
 int _blinkDelay = BlinkDelay;
@@ -48,12 +46,11 @@ ColorProgram* _currentColorProgram;
 
 void(*resetFunc) (void) = nullptr;
 
-
 void setup() 
 {	
 	//Serial.begin(9600);
 
-	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
+	/*auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
 	UpdateSpeedColorSettings(savedSpeedColor);
 	if(savedSpeedColor != nullptr)
 	{
@@ -62,17 +59,19 @@ void setup()
 
 	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
 
-	attachInterrupt(0, Update, RISING);
+	attachInterrupt(0, Update, RISING);*/
 	BTserial.begin(9600);
 	ErrorHandlingHelper::ErrorHandler = HandleError;
 }
 
 void loop()
 {	
-	ReceiveCommand();
+	
+	Test2();
+	/*ReceiveCommand();
 
 	float voltage = GetVoltage();
-	//*
+	
 	if(voltage <= THRESHOLD_VOLTAGE)
 	{		
 		LowVoltageBlink();
@@ -81,10 +80,19 @@ void loop()
 	{		
 		Work();
 	}
-	//*/
 
-	setDutyBlink();
-	////work();	
+	*/
+	//work();	
+}
+
+
+void Test2()
+{
+	delay(1000);
+	digitalWrite(BLINK_PIN, HIGH);
+	BTserial.write("test ");
+	delay(1000);
+	digitalWrite(BLINK_PIN, LOW);
 }
 
 SerializableEntityBase* GetSysInfo()
@@ -197,20 +205,6 @@ void ReceiveCommand()
 				delete sendBuf;
 			}
 		}
-	}
-}
-
-void setDutyBlink()
-{
-	if (_signalHigh)
-	{
-		_signalHigh = false;
-		digitalWrite(BLINK_PIN, HIGH);
-	}
-	else
-	{
-		_signalHigh = true;
-		digitalWrite(BLINK_PIN, LOW);
 	}
 }
 

@@ -28,6 +28,7 @@ const unsigned char GetSystemInformationCommandId = 2;
 const unsigned char GetSpeedColorProgramCommandId = 4;
 const unsigned char UploadSpeedColorProgramCommandId = 5;
 const unsigned char UploadColorProgramCommandId = 8;
+const unsigned char ErrorCommandId = 10;
 
 const ArduinoDouble Distance = 2350;
 const ArduinoDouble TopSpeed = static_cast<ArduinoDouble>(static_cast<ArduinoDouble>(8333) / static_cast<ArduinoDouble>(2000));

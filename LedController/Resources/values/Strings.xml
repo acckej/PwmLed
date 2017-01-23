@@ -12,4 +12,5 @@
 		<string name="tbColorProgram">Color program</string>
 		<string name="tbSpeedColor">Speed color</string>
 		<string name="tbTelemetry">Telemetry</string>
+		<string name="tbTerminal">Terminal</string>
 </resources>

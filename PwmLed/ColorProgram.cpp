@@ -35,7 +35,7 @@ ArduinoInt ColorProgram::GetNumberOfSteps() const
 
 bool ColorProgram::IsLastStep() const
 {
-	return _stepsCounter == _numberOfSteps - 1;
+	return _stepsCounter == _numberOfSteps;
 }
 
 void ColorProgram::Reset()

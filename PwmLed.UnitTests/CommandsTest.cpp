@@ -74,6 +74,31 @@ namespace PwmLedUnitTests
 			delete result;
 		}
 
+		TEST_METHOD(ColorProgramDeserializationTest)
+		{
+			auto input = "070300040002030108000607059001C8FA64";
+			auto filledBuf = new char[strlen(input) / 2];
+			TestHelper::Hex2bin(input, filledBuf);
+			
+			ColorProgram program;
+
+			program.FillFromBuffer(filledBuf);
+
+			Assert::AreEqual(3, static_cast<int>(program.GetNumberOfSteps()));
+
+			auto counter = static_cast<ArduinoInt>(0);
+
+			do
+			{
+				auto step = program.GetNextStep();
+				counter++;
+			} while (!program.IsLastStep() && counter <= NumberOfStepsMax);
+
+			Assert::AreEqual(3, static_cast<int>(counter));
+
+			delete filledBuf;
+		}
+
 		TEST_METHOD(ColorProgramTest)
 		{			
 			auto filledBuf = TestHelper::GetFilledColorProgram();
@@ -90,7 +115,7 @@ namespace PwmLedUnitTests
 			{
 				auto step = program.GetNextStep();
 				counter++;
-			} while (program.IsLastStep() || counter >= NumberOfStepsMax);
+			} while (!program.IsLastStep() && counter <= NumberOfStepsMax);
 
 			Assert::AreEqual(TestHelper::StepsCount, counter);
 

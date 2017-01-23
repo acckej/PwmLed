@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LedController.Logic.Types
+﻿namespace LedController.Logic.Types
 {
 	public class ArduinoByte : IArduinoType<byte>
 	{
@@ -9,7 +7,7 @@ namespace LedController.Logic.Types
 
 		public byte[] GetBytes()
 		{
-			return BitConverter.GetBytes(Value);
+			return new[] { Value };
 		}
 
 		public void FromBytes(byte[] buf, int index)

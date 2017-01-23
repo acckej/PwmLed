@@ -12,5 +12,11 @@ namespace LedController.Logic.Helper
 							 .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
 							 .ToArray();
 		}
+
+		public static string ByteArrayToString(byte[] ba)
+		{
+			string hex = BitConverter.ToString(ba);
+			return hex.Replace("-", "");
+		}
 	}
 }

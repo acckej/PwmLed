@@ -22,12 +22,14 @@ namespace LedController
 						 {
 							 new SpeedColorFragment(),
 							 new ColorProgramFragment(), 
-							 new TelemetryFragment() 
+							 new TelemetryFragment(),
+							 new TerminalFragment() 
 						 };
 
 			AddTabToActionBar(Resource.String.tbSpeedColor, Resource.Drawable.speed_color_tab);
 			AddTabToActionBar(Resource.String.tbColorProgram, Resource.Drawable.color_program_tab);
 			AddTabToActionBar(Resource.String.tbTelemetry, Resource.Drawable.telemetry_tab);
+			AddTabToActionBar(Resource.String.tbTerminal, Resource.Drawable.terminal_tab);
 		}
 
 		private void AddTabToActionBar(int labelResourceId, int iconResourceId)

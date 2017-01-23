@@ -54,6 +54,25 @@ void TestHelper::Hex2bin(const char* src, char* target)
 	}
 }
 
+//unsigned char* HexToChar(const char* hexstr)
+//{
+//	size_t len = strlen(hexstr);
+//	if (len % 2 != 0)
+//	{
+//		return nullptr;
+//	}
+//
+//	size_t final_len = len / 2;
+//	unsigned char* chrs = static_cast<unsigned char*>(malloc((final_len + 1) * sizeof(*chrs)));
+//	for (size_t i = 0, j = 0; j < final_len; i += 2, j++)
+//	{
+//		chrs[j] = (hexstr[i] % 32 + 9) % 25 * 16 + (hexstr[i + 1] % 32 + 9) % 25;
+//	}
+//
+//	chrs[final_len] = '\0';
+//	return chrs;
+//}
+
 unsigned char TestHelper::Char2Byte(char input)
 {
 	if (input >= '0' && input <= '9')

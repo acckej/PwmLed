@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <EditText
+            android:inputType="textMultiLine"
+            android:id="@+id/txtTerminal"
+            android:cursorVisible="false"
+            android:editable="false"
+            android:singleLine="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textIsSelectable="true"
+            android:enabled="false"
+            android:scrollbars="vertical"
+            android:lines="15" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtMessage"
+            android:editable="true"
+            android:enabled="true"
+            android:layout_marginTop="20dp"
+            android:cursorVisible="true"
+            android:singleLine="true" />
+        <Button
+            android:text="Send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSendTerminalMessage"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+</LinearLayout>

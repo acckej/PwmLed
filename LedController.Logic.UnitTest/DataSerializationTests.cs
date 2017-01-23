@@ -58,5 +58,40 @@ namespace LedController.Logic.UnitTest
 			Assert.AreEqual((short)6, info.IdleDelay);
 			Assert.AreEqual((short)3, info.NotMovingDelay);
 		}
+
+		[TestMethod]
+		public void SerializeColorProgramTest()
+		{
+			var program = new ColorProgram();
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 1,
+				Red = 2,
+				Green = 3,
+				Delay = 4
+			});
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 5,
+				Red = 6,
+				Green = 7,
+				Delay = 8
+			});
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 100,
+				Red = 200,
+				Green = 250,
+				Delay = 400
+			});
+
+			var serialized = program.Serialize();
+			var str = DataOperationsHelper.ByteArrayToString(serialized);
+
+			Assert.IsFalse(string.IsNullOrEmpty(str));
+		}
 	}
 }
