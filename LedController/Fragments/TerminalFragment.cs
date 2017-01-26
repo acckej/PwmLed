@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Graphics;
 using Android.OS;
-using Android.Text;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LedController.Bluetooth;
@@ -64,19 +64,26 @@ namespace LedController.Fragments
 
 				_updater = new Task(() =>
 				{
-					do
+					try
 					{
-						var data = _manager.GetResponse();
-						if (data != null && data.Length > 0)
+						do
 						{
-							var text = Encoding.ASCII.GetString(data);
-							Activity.RunOnUiThread(() =>
+							var data = _manager.GetResponse();
+							if (data != null && data.Length > 0)
 							{
-								var log = _view.FindViewById<EditText>(Resource.Id.txtTerminal);
-								log.Append($"\n-> {text}");
-							});
-						}
-					} while (!_autoUpdate.Token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(500)));
+								var text = Encoding.ASCII.GetString(data);
+								Activity.RunOnUiThread(() =>
+								{
+									var log = _view.FindViewById<EditText>(Resource.Id.txtTerminal);
+									log.Append($"\n-> {text}");
+								});
+							}
+						} while (!_autoUpdate.Token.WaitHandle.WaitOne(TimeSpan.FromMilliseconds(1000)));
+					}
+					catch (Exception ex)
+					{
+						Log.Error("LedControllerTerminalError", ex.ToString());
+					}
 				});
 
 				_updater.Start();

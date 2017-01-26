@@ -48,9 +48,9 @@ void(*resetFunc) (void) = nullptr;
 
 void setup() 
 {	
-	//Serial.begin(9600);
+	Serial.begin(9600);
 
-	/*auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
+	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
 	UpdateSpeedColorSettings(savedSpeedColor);
 	if(savedSpeedColor != nullptr)
 	{
@@ -59,15 +59,17 @@ void setup()
 
 	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
 
-	attachInterrupt(0, Update, RISING);*/
+	attachInterrupt(0, Update, RISING);
 	BTserial.begin(9600);
 	ErrorHandlingHelper::ErrorHandler = HandleError;
 }
 
 void loop()
 {	
-	
 	Test2();
+	//ReceiveCommand();
+
+	//delay(1000);
 	/*ReceiveCommand();
 
 	float voltage = GetVoltage();
@@ -90,7 +92,9 @@ void Test2()
 {
 	delay(1000);
 	digitalWrite(BLINK_PIN, HIGH);
-	BTserial.write("test ");
+
+	ErrorHandlingHelper::HandleError("test message");	
+
 	delay(1000);
 	digitalWrite(BLINK_PIN, LOW);
 }
@@ -119,8 +123,12 @@ void ApplyColorProgram(DeserializableEntityBase* entity)
 
 void HandleError(char *message)
 {
-	BTserial.write(message);
-	resetFunc();
+	CommandResult result(ErrorCommandId, message, strlen(message), true);
+	auto buffer = new char[result.GetDataSize()];
+	result.WriteDataToBuffer(buffer);
+	BTserial.write(buffer, result.GetDataSize());
+	delete buffer;
+	//resetFunc();
 }
 
 void ApplySpeedColorProgram(DeserializableEntityBase* entity)

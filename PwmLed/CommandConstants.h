@@ -46,3 +46,10 @@ const ArduinoDouble MuBlue = 0;
 const ArduinoDouble SigmaGreen = 4;
 const ArduinoDouble SigmaRed = 4;
 const ArduinoDouble SigmaBlue = 2;
+
+
+#define COLORPROGRAM_FLAG_ADDRESS 512
+#define COLOR_PROGRAM_EEPROM_SEGMENT COLORPROGRAM_FLAG_ADDRESS + sizeof(ArduinoInt)
+
+#define SPEEDCOLOR_FLAG_ADDRESS 0
+#define SPEED_COLOR_EEPROM_SEGMENT sizeof(ArduinoInt)

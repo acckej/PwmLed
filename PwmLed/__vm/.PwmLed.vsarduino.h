@@ -86,6 +86,8 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <..\PwmLed\DeserializableEntityBase.h>
 #include <..\PwmLed\EepromHelper.cpp>
 #include <..\PwmLed\EepromHelper.h>
+#include <..\PwmLed\EepromProvider.cpp>
+#include <..\PwmLed\EepromProvider.h>
 #include <..\PwmLed\ErrorHandlingHelper.cpp>
 #include <..\PwmLed\ErrorHandlingHelper.h>
 #include <..\PwmLed\SerializableEntityBase.cpp>

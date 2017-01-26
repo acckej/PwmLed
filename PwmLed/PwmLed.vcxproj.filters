@@ -69,6 +69,9 @@
     <ClInclude Include="EepromHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EepromProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ColorProgram.cpp">
@@ -111,6 +114,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EepromHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EepromProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -29,6 +29,8 @@
     <ClInclude Include="DataEntityFactoryBase.h" />
     <ClInclude Include="DataSerializationHelper.h" />
     <ClInclude Include="DeserializableEntityBase.h" />
+    <ClInclude Include="EepromHelper.h" />
+    <ClInclude Include="EepromProvider.h" />
     <ClInclude Include="ErrorHandlingHelper.h" />
     <ClInclude Include="SerializableEntityBase.h" />
     <ClInclude Include="SpeedColorProgramSettings.h" />
@@ -44,6 +46,8 @@
     <ClCompile Include="DataEntityFactoryBase.cpp" />
     <ClCompile Include="DataSerializationHelper.cpp" />
     <ClCompile Include="DeserializableEntityBase.cpp" />
+    <ClCompile Include="EepromHelper.cpp" />
+    <ClCompile Include="EepromProvider.cpp" />
     <ClCompile Include="ErrorHandlingHelper.cpp" />
     <ClCompile Include="SerializableEntityBase.cpp" />
     <ClCompile Include="SpeedColorProgramSettings.cpp" />

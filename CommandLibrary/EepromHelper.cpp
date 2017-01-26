@@ -44,7 +44,7 @@ SpeedColorProgramSettings* EepromHelper::SaveSpeedColorSettingsToEeprom(Deserial
 
 		return data;
 	}
-
+	
 	return nullptr;
 }
 
@@ -52,14 +52,14 @@ SpeedColorProgramSettings* EepromHelper::RestoreSpeedColorFromEeprom()
 {
 	auto size = EEPROMReadInt(SPEEDCOLOR_FLAG_ADDRESS);
 
-	if (size == 0)
+	if(size == 0)
 	{
 		return nullptr;
 	}
 
 	char buffer[512];
-
-	for (int i = 0; i < size; i++)
+	
+	for(int i = 0; i < size; i++)
 	{
 		buffer[i] = EepromProvider::Read(SPEED_COLOR_EEPROM_SEGMENT + i);
 	}

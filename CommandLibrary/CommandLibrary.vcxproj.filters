@@ -57,6 +57,12 @@
     <ClInclude Include="CommandConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EepromHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EepromProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandDispatcher.cpp">
@@ -96,6 +102,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataEntityFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EepromHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EepromProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
