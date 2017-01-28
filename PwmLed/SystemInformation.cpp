@@ -22,7 +22,7 @@ ArduinoSize SystemInformation::GetDataSize()
 }
 
 void SystemInformation::WriteDataToBuffer(char* buffer)
-{
+{	
 	buffer = DataSerializationHelper<unsigned char>::WriteDataToArray(buffer, SystemInformationPacketId);
 	buffer = DataSerializationHelper<ArduinoSize>::WriteDataToArray(buffer, GetDataSize());
 	buffer = DataSerializationHelper<ArduinoDouble>::WriteDataToArray(buffer, _speed);

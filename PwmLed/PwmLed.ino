@@ -50,14 +50,14 @@ void setup()
 {	
 	Serial.begin(9600);
 
-	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
+	/*auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
 	UpdateSpeedColorSettings(savedSpeedColor);
 	if(savedSpeedColor != nullptr)
 	{
 		delete savedSpeedColor;
 	}
 
-	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
+	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();*/
 
 	attachInterrupt(0, Update, RISING);
 	BTserial.begin(9600);
@@ -66,10 +66,12 @@ void setup()
 
 void loop()
 {	
-	Test2();
-	//ReceiveCommand();
+	ReceiveCommand();
 
-	//delay(1000);
+	delay(1000);
+	//digitalWrite(BLINK_PIN, HIGH);
+	
+	//digitalWrite(BLINK_PIN, LOW);
 	/*ReceiveCommand();
 
 	float voltage = GetVoltage();
@@ -91,24 +93,25 @@ void loop()
 void Test2()
 {
 	delay(1000);
-	digitalWrite(BLINK_PIN, HIGH);
+	//digitalWrite(BLINK_PIN, HIGH);
 
 	ErrorHandlingHelper::HandleError("test message");	
 
 	delay(1000);
-	digitalWrite(BLINK_PIN, LOW);
+	//digitalWrite(BLINK_PIN, LOW);
 }
 
 SerializableEntityBase* GetSysInfo()
-{
+{	
 	float voltage = GetVoltage();
-	SystemInformation result(voltage, _currentSpeed);
-	return &result;
+	SystemInformation* result = new SystemInformation(voltage, _currentSpeed);	
+	Serial.print(result->GetDataSize());
+	return result;
 }
 
 void ApplyColorProgram(DeserializableEntityBase* entity)
 {
-	auto program = EepromHelper::SaveColorProgramToEeprom(entity);
+	/*auto program = EepromHelper::SaveColorProgramToEeprom(entity);
 
 	if (program != nullptr)
 	{
@@ -118,22 +121,25 @@ void ApplyColorProgram(DeserializableEntityBase* entity)
 		}
 		_currentColorProgram = program;
 		_currentMode = ColorProgramMode;
-	}
+	}*/
 }
 
 void HandleError(char *message)
-{
-	CommandResult result(ErrorCommandId, message, strlen(message), true);
+{		
+	/*CommandResult result(ErrorCommandId, message, strlen(message), true);
 	auto buffer = new char[result.GetDataSize()];
 	result.WriteDataToBuffer(buffer);
 	BTserial.write(buffer, result.GetDataSize());
+		
+	Serial.write(buffer, result.GetDataSize());
+
 	delete buffer;
-	//resetFunc();
+	resetFunc();*/
 }
 
 void ApplySpeedColorProgram(DeserializableEntityBase* entity)
 {
-	auto updated = EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
+	/*auto updated = EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
 
 	if (updated != nullptr)
 	{
@@ -150,7 +156,7 @@ void ApplySpeedColorProgram(DeserializableEntityBase* entity)
 		_topSpeed = updated->GetTopSpeed();
 
 		_currentMode = SpeedColorMode;
-	}
+	}*/
 }
 
 void UpdateSpeedColorSettings(SpeedColorProgramSettings* updated)
@@ -175,8 +181,8 @@ void UpdateSpeedColorSettings(SpeedColorProgramSettings* updated)
 
 SerializableEntityBase* GetCurrentSpeedColorProgram()
 {
-	SpeedColorProgramSettings settings;
-	settings.SetData(_distance,
+	auto settings = new SpeedColorProgramSettings();
+	settings->SetData(_distance,
 		_topSpeed,
 		_notMovingDelay,
 		_colorChangePeriod,
@@ -189,27 +195,31 @@ SerializableEntityBase* GetCurrentSpeedColorProgram()
 		_sigmaGreen,
 		_sigmaBlue);
 
-	return &settings;
+	return settings;
 }
 
 void ReceiveCommand()
 {
 	if(BTserial.available())
 	{
-		char buffer[READ_BUFFER_SIZE];
+		char buffer[READ_BUFFER_SIZE];			
 		auto size = BTserial.readBytes(buffer, READ_BUFFER_SIZE);
-
+						
 		if(size > 0)
-		{
+		{				
 			auto result = _dispatcher.ReceivePacket(buffer);
 
 			if(result != nullptr)
-			{
+			{				
 				auto sendBuf = new char[result->GetDataSize()];
-				result->WriteDataToBuffer(sendBuf);
+				result->WriteDataToBuffer(sendBuf);				
+				auto sz = result->GetDataSize();
 
+				Serial.print(static_cast<int>(sz));
+
+				BTserial.write(sendBuf, sz);
+				
 				delete result;
-				BTserial.write(sendBuf, result->GetDataSize());
 				delete sendBuf;
 			}
 		}

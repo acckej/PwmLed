@@ -16,6 +16,7 @@ namespace LedController.Fragments
 		private View _view;
 		private CancellationTokenSource _autoUpdate;
 		private Task _updater;
+		private BluetoothManager _btManager;
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -40,26 +41,24 @@ namespace LedController.Fragments
 		{
 			try
 			{
-				using (var bm = BluetoothManager.Current)
+				_btManager = BluetoothManager.Current;
+				var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+				if (result.HasError)
 				{
-					var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
-					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
-					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
-
-					if (result.HasError)
+					ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+				}
+				else
+				{
+					var data = result.Data as SystemInformation;
+					if (data == null)
 					{
-						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+						throw new ApplicationException("Wrong response type");
 					}
-					else
-					{
-						var data = result.Data as SystemInformation;
-						if (data == null)
-						{
-							throw new ApplicationException("Wrong response type");
-						}
 
-						Update(data);
-					}
+					Update(data);
 				}
 			}
 			catch (Exception ex)
@@ -98,6 +97,11 @@ namespace LedController.Fragments
 
 		private void Cleanup()
 		{
+			if (_btManager != null)
+			{
+				_btManager.Dispose();
+				_btManager = null;
+			}
 			_autoUpdate?.Cancel();
 		}
 

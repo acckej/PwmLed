@@ -40,8 +40,9 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 	switch (commandId)
 	{
 	case GetSystemInformationCommandId:
-	{
-		return GetResponse(_getSysInfo(), commandId);
+	{		
+		auto res = GetResponse(_getSysInfo(), commandId);
+		return res;
 	}
 	case GetSpeedColorProgramCommandId:
 	{
@@ -78,10 +79,9 @@ CommandResult* CommandDispatcher::GetResponse(SerializableEntityBase* data, unsi
 	}
 
 	auto dataLength = data->GetDataSize();
-	auto buf = new char[dataLength];
-
+	auto buf = new char[dataLength];	
 	data->WriteDataToBuffer(buf);
-
+	delete data;
 	return new CommandResult(commandId, buf, dataLength, false);
 }
 

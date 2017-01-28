@@ -28,6 +28,13 @@ namespace LedController.Logic.UnitTest
 		}
 
 		[TestMethod]
+		public void GetTelemetryCommandSerializationTest()
+		{
+			var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
+			var serialized = cmd.Serialize();
+		}
+
+		[TestMethod]
 		public void DeserializeGetSpeedColorProgramCommandResultTest()
 		{
 			var factory = new DataPacketFactory();

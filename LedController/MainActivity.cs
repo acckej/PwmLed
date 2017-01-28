@@ -20,15 +20,15 @@ namespace LedController
 
 			_fragments = new Fragment[]
 						 {
+							 new TelemetryFragment(),
 							 new SpeedColorFragment(),
 							 new ColorProgramFragment(), 
-							 new TelemetryFragment(),
 							 new TerminalFragment() 
 						 };
 
+			AddTabToActionBar(Resource.String.tbTelemetry, Resource.Drawable.telemetry_tab);
 			AddTabToActionBar(Resource.String.tbSpeedColor, Resource.Drawable.speed_color_tab);
 			AddTabToActionBar(Resource.String.tbColorProgram, Resource.Drawable.color_program_tab);
-			AddTabToActionBar(Resource.String.tbTelemetry, Resource.Drawable.telemetry_tab);
 			AddTabToActionBar(Resource.String.tbTerminal, Resource.Drawable.terminal_tab);
 		}
 
