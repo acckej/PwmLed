@@ -176,5 +176,15 @@ namespace PwmLedUnitTests
 			Assert::AreEqual(static_cast<ArduinoDouble>(1030), speed);
 			Assert::AreEqual(static_cast<ArduinoDouble>(2050), voltage);
 		}
+
+		TEST_METHOD(HelperTest)
+		{
+			unsigned char buf[10]{1, 2, 3, 4, 5, 100, 7, 80, 90, 10};
+			auto str = TestHelper::HexChar(buf, 10);
+
+			Assert::IsNotNull(str);
+			Assert::AreEqual(20, static_cast<int>(strlen(str)));
+			delete str;
+		}
 	};
 }

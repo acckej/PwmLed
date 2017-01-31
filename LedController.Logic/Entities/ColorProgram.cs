@@ -6,7 +6,7 @@ using LedController.Logic.Types;
 
 namespace LedController.Logic.Entities
 {
-	public class ColorProgram : ISerializableEntity
+	public class ColorProgram : ISerializableEntity, IDeserializableEntity
 	{
 		public ColorProgram()
 		{
@@ -37,6 +37,38 @@ namespace LedController.Logic.Entities
 			}
 
 			return buf;
+		}
+
+		public void Deserialize(byte[] buffer)
+		{
+			var offset = 0;
+			_steps.Clear();
+
+			var packageId = new ArduinoByte();
+			offset = SerializationHelper.ReadFromBuffer(buffer, offset, packageId);
+
+			if (packageId.Value != (byte)Constants.PacketType.ColorProgramPacketId)
+			{
+				throw new ApplicationException($"Invalid packet id: {packageId.Value}");
+			}
+
+			var steps = new ArduinoInt();
+			offset = SerializationHelper.ReadFromBuffer(buffer, offset, steps);
+
+			if (steps.Value < 0 || steps.Value > Constants.MaxColorProgramLength)
+			{
+				throw new ApplicationException($"Invalid program size id: {steps.Value}");
+			}
+			
+			for (int i = 0; i < steps.Value; i++)
+			{
+				var step = new ColorProgramStep();
+				var stepData = buffer.Skip(offset).Take(step.Size).ToArray(); 
+
+				step.Deserialize(stepData);
+				offset += step.Size;
+				_steps.Add(step);
+			}
 		}
 
 		public int Size

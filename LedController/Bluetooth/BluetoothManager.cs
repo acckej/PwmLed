@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Android.Bluetooth;
+using Java.IO;
 using Java.Util;
 
 namespace LedController.Bluetooth
@@ -67,13 +69,21 @@ namespace LedController.Bluetooth
 
 			var result = new List<byte>();
 			var buffer = new byte[512];
-			int ln;
-
-			do
+			using (InputStream s = new BufferedInputStream(_socket.InputStream))
 			{
-				ln = _socket.InputStream.Read(buffer, 0, buffer.Length);
-				result.AddRange(buffer.Take(ln));
-			} while (ln == buffer.Length);
+				var ln = 0;
+				while (s.Available() > 0 || ln == 0)
+				{
+					ln = s.Read(buffer);
+					result.AddRange(buffer.Take(ln));
+				}
+			}
+
+			//do
+			//{
+			//	ln = _socket.InputStream.Read(buffer, 0, buffer.Length);
+			//	result.AddRange(buffer.Take(ln));
+			//} while (ln == buffer.Length);
 
 			return result.ToArray();
 		}

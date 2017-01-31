@@ -18,6 +18,12 @@ namespace LedController.Logic
 					result.Deserialize(buffer);
 					return result;
 				}
+				case (byte) Constants.PacketType.ColorProgramPacketId:
+				{
+					var result = new ColorProgram();
+					result.Deserialize(buffer);
+					return result;
+				}
 				case (byte) Constants.PacketType.SystemInformationPacketId:
 				{
 					var result = new SystemInformation();

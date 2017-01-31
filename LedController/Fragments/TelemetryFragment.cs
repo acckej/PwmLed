@@ -110,7 +110,9 @@ namespace LedController.Fragments
 			var voltage = _view.FindViewById<ProgressBar>(Resource.Id.pbVoltage);
 			voltage.Progress = (int) (info.Voltage*Constants.Telemetry.VoltageMultiplier);
 			var speed = _view.FindViewById<TextView>(Resource.Id.lblSpeed);
+			var voltLabel = _view.FindViewById<TextView>(Resource.Id.lblVoltage);
 
+			voltLabel.Text = $"Voltage: {info.Voltage.ToString("F1")}v";
 			speed.Text = $"Speed: {(info.Speed*Constants.Telemetry.SpeedMultiplier).ToString("F1")} km/h";
 		}
 	}

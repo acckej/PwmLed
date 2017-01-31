@@ -11,14 +11,19 @@ using LedController.Adapters;
 using LedController.Bluetooth;
 using LedController.Logic;
 using LedController.Logic.Entities;
+using Newtonsoft.Json;
 
 namespace LedController.Fragments
 {
 	public class ColorProgramFragment : Fragment
 	{
+		private const string ColorProgramKey = "ColorProgram";
 		private ColorProgramStepAdapter _listAdapter;
 		private bool _testing;
 		private View _view;
+		private IList<ColorProgramStep> _steps;
+		private BluetoothManager _btManager;
+
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -26,7 +31,14 @@ namespace LedController.Fragments
 			_view = view;
 			var list = view.FindViewById<ListView>(Resource.Id.lvColorProgram);
 			_view.SetBackgroundColor(new Color(0, 0, 0));
-			var listAdapter = new ColorProgramStepAdapter(new List<ColorProgramStep>
+
+			var saved = savedInstanceState?.GetString(ColorProgramKey);
+			if (saved != null)
+			{
+				_steps = JsonConvert.DeserializeObject<ColorProgramStep[]>(saved);
+			}
+
+			_steps = _steps ?? new List<ColorProgramStep>
 			{
 				new ColorProgramStep
 				{
@@ -42,12 +54,13 @@ namespace LedController.Fragments
 					Green = 134,
 					Delay = 500
 				}
-			});
+			};
 
-			_listAdapter = listAdapter;
-			list.Adapter = listAdapter;
-			listAdapter.OnColorBoxClicked += ListAdapterOnOnColorBoxClicked;
-			listAdapter.OnStepButtonClicked += ListAdapterOnOnStepButtonClicked;
+			_listAdapter = new ColorProgramStepAdapter(_steps);
+			
+			list.Adapter = _listAdapter;
+			_listAdapter.OnColorBoxClicked += ListAdapterOnOnColorBoxClicked;
+			_listAdapter.OnStepButtonClicked += ListAdapterOnOnStepButtonClicked;
 
 			var addButton = view.FindViewById<Button>(Resource.Id.btnAdd);
 			addButton.Click += AddButton_Click;
@@ -58,7 +71,51 @@ namespace LedController.Fragments
 			var testButton = view.FindViewById<Button>(Resource.Id.btnTest);
 			testButton.Click += TestButton_Click;
 
+			var getButton = view.FindViewById<Button>(Resource.Id.btnGetProgram);
+			getButton.Click += GetButton_Click;
+
 			return view;
+		}
+
+		private void GetButton_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				_btManager = BluetoothManager.Current;
+
+				if (_listAdapter.Count == 0)
+				{
+					return;
+				}
+				var program = new ColorProgram();
+				foreach (var step in _listAdapter.Steps)
+				{
+					program.Add(step);
+				}
+
+				var cmd = new Command(Logic.Constants.CommandType.GetColorProgramCommandId);
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+				if (result.HasError)
+				{
+					ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+					return;
+				}
+
+				var colorProgram = result.Data as ColorProgram;
+				if (colorProgram == null)
+				{
+					ErrorHandler.HandleErrorWithMessageBox("Result data is empty or has invalid type", _view.Context);
+					return;
+				}
+
+				_listAdapter.SetProgram(colorProgram);
+			}
+			catch (Exception ex)
+			{
+				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+			}
 		}
 
 		private void TestButton_Click(object sender, EventArgs e)
@@ -116,26 +173,25 @@ namespace LedController.Fragments
 		{
 			try
 			{
-				using (var bm = BluetoothManager.Current)
+				_btManager = BluetoothManager.Current;
+
+				if (_listAdapter.Count == 0)
 				{
-					if (_listAdapter.Count == 0)
-					{
-						return;
-					}
-					var program = new ColorProgram();
-					foreach (var step in _listAdapter.Steps)
-					{
-						program.Add(step);
-					}
+					return;
+				}
+				var program = new ColorProgram();
+				foreach (var step in _listAdapter.Steps)
+				{
+					program.Add(step);
+				}
 
-					var cmd = new Command(Logic.Constants.CommandType.UploadColorProgramCommandId, program);
-					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
-					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+				var cmd = new Command(Logic.Constants.CommandType.UploadColorProgramCommandId, program);
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
 
-					if (result.HasError)
-					{
-						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
-					}
+				if (result.HasError)
+				{
+					ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
 				}
 			}
 			catch (Exception ex)
@@ -199,8 +255,16 @@ namespace LedController.Fragments
 
 		public override void OnPause()
 		{
+			_steps = _listAdapter.Steps;
 			_testing = false;
 			base.OnPause();
+		}
+		public override void OnSaveInstanceState(Bundle outState)
+		{
+			var serialized = JsonConvert.SerializeObject(_listAdapter.Steps);
+			outState.PutString(ColorProgramKey, serialized);
+
+			base.OnSaveInstanceState(outState);
 		}
 
 		private void ListAdapterOnOnColorBoxClicked(int position)

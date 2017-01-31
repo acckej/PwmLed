@@ -8,7 +8,7 @@ namespace LedController
 	public class MainActivity : Activity
 	{
 		Fragment[] _fragments;
-
+		
 		protected override void OnCreate(Bundle bundle)
 		{
 			base.OnCreate(bundle);

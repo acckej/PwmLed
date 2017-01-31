@@ -8,6 +8,7 @@
 #include "SystemInformation.h"
 #include "EepromHelper.h"
 #include "EEPROM.h"
+#include "DebugHelper.h"
 
 SoftwareSerial BTserial(BT_RX_PIN, BT_TX_PIN); // RX | TX
 
@@ -37,7 +38,7 @@ double _sigmaGreen = SigmaGreen;
 double _sigmaBlue = SigmaBlue;
 
 DataEntityFactory _factory;
-CommandDispatcher _dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &_factory);
+CommandDispatcher _dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &_factory, GetColorProgram);
 
 enum Mode { SpeedColorMode, ColorProgramMode};
 Mode _currentMode = SpeedColorMode;
@@ -50,14 +51,14 @@ void setup()
 {	
 	Serial.begin(9600);
 
-	/*auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
+	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
 	UpdateSpeedColorSettings(savedSpeedColor);
 	if(savedSpeedColor != nullptr)
 	{
 		delete savedSpeedColor;
 	}
 
-	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();*/
+	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
 
 	attachInterrupt(0, Update, RISING);
 	BTserial.begin(9600);
@@ -65,13 +66,40 @@ void setup()
 }
 
 void loop()
-{	
-	ReceiveCommand();
+{		
+	/*auto v = EEPROM.read(COLORPROGRAM_FLAG_ADDRESS);	
+	Serial.print(v);
+	auto c = EEPROM.read(COLORPROGRAM_FLAG_ADDRESS + 1);
+	Serial.print(c);*/
 
-	delay(1000);
-	//digitalWrite(BLINK_PIN, HIGH);
-	
-	//digitalWrite(BLINK_PIN, LOW);
+	if(	_currentColorProgram != nullptr)
+	{
+		Serial.print(_currentColorProgram->GetNumberOfSteps());
+		auto step = _currentColorProgram->GetNextStep();
+		Serial.print("__");
+		Serial.print(step.GetDelay());
+		step = _currentColorProgram->GetNextStep();
+		Serial.print("--");
+		Serial.print(step.GetDelay());
+	}
+	else
+	{
+		Serial.print("clean");
+	}
+
+	/*auto program = new ColorProgram();
+	Serial.print("new_");
+	delete _currentColorProgram;
+	Serial.print("delete_");
+	_currentColorProgram = program;
+	Serial.print("set_");*/
+
+	//ReceiveCommand();
+
+	digitalWrite(BLINK_PIN, HIGH);
+	delay(500);
+	digitalWrite(BLINK_PIN, LOW);
+	delay(500);
 	/*ReceiveCommand();
 
 	float voltage = GetVoltage();
@@ -109,19 +137,48 @@ SerializableEntityBase* GetSysInfo()
 	return result;
 }
 
+SerializableEntityBase* GetColorProgram()
+{
+	return _currentColorProgram;
+}
+
 void ApplyColorProgram(DeserializableEntityBase* entity)
 {
-	/*auto program = EepromHelper::SaveColorProgramToEeprom(entity);
+	//auto program = EepromHelper::SaveColorProgramToEeprom(entity);
 
-	if (program != nullptr)
+	auto data = reinterpret_cast<ColorProgram*>(entity);
+
+	Serial.print("as");
+
+	if (data != nullptr)
 	{
-		if(_currentColorProgram != nullptr)
-		{
-			delete _currentColorProgram;
-		}
-		_currentColorProgram = program;
-		_currentMode = ColorProgramMode;
-	}*/
+		Serial.print("df");
+	}
+
+	if(	data != nullptr)
+	{
+		Serial.print(data->GetNumberOfSteps());
+		auto step = data->GetNextStep();
+		Serial.print("__");
+		Serial.print(step.GetDelay());
+		step = data->GetNextStep();
+		Serial.print("--");
+		Serial.print(step.GetDelay());
+	}
+
+	//if (program != nullptr)
+	//{
+	//	Serial.print("df");
+	//	if(_currentColorProgram != nullptr)
+	//	{
+	//		Serial.print("gh");
+	//		//delete _currentColorProgram;
+	//		Serial.print("jk");
+	//	}	
+
+	//	/*_currentColorProgram = program;
+	//	_currentMode = ColorProgramMode;*/
+	//}
 }
 
 void HandleError(char *message)
@@ -202,27 +259,35 @@ void ReceiveCommand()
 {
 	if(BTserial.available())
 	{
-		char buffer[READ_BUFFER_SIZE];			
+		char buffer[READ_BUFFER_SIZE];
 		auto size = BTserial.readBytes(buffer, READ_BUFFER_SIZE);
+
+		/*Serial.print("sz");
+		Serial.print(size);*/
+
+		auto packet = DebugHelper::HexChar((char*)buffer, size);
+		Serial.print(packet);
+		delete packet;
+
+		BTserial.print("stub");
 						
-		if(size > 0)
+		/*if(size > 0)
 		{				
 			auto result = _dispatcher.ReceivePacket(buffer);
 
 			if(result != nullptr)
 			{				
 				auto sendBuf = new char[result->GetDataSize()];
-				result->WriteDataToBuffer(sendBuf);				
+				result->WriteDataToBuffer(sendBuf);
 				auto sz = result->GetDataSize();
-
-				Serial.print(static_cast<int>(sz));
-
+				
+				Serial.print(sz);
 				BTserial.write(sendBuf, sz);
 				
 				delete result;
 				delete sendBuf;
 			}
-		}
+		}*/
 	}
 }
 

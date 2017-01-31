@@ -45,6 +45,18 @@ std::string TestHelper::HexStr(unsigned char *data, int len)
 	return s;
 }
 
+char* TestHelper::HexChar(unsigned char* data, int len)
+{
+	char* s = new char[len * 2  + 1];
+	s[len * 2] = 0;
+	for (int i = 0; i < len; ++i)
+	{
+		s[2 * i] = Hexmap[(data[i] & 0xF0) >> 4];
+		s[2 * i + 1] = Hexmap[data[i] & 0x0F];
+	}
+	return s;
+}
+
 void TestHelper::Hex2bin(const char* src, char* target)
 {
 	while (*src && src[1])

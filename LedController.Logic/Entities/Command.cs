@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using LedController.Logic.Interfaces;
+﻿using LedController.Logic.Interfaces;
 using LedController.Logic.Types;
 
 namespace LedController.Logic.Entities
@@ -17,7 +16,6 @@ namespace LedController.Logic.Entities
 
 		public byte[] Serialize()
 		{
-
 			var header = new byte[_type.Size];
 			header[0] = _type.Value;
 			byte[] data;
@@ -30,8 +28,12 @@ namespace LedController.Logic.Entities
 			{
 				data = _data.Serialize();
 			}
+		
+			var result = new byte[header.Length + data.Length];
+			header.CopyTo(result, 0);
+			data.CopyTo(result, header.Length);
 
-			return header.Union(data).ToArray();
+			return result;
 		}
 
 		public int Size => _type.Size + (_data?.Size ?? sizeof(Constants.PacketType));

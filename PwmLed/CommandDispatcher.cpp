@@ -15,13 +15,15 @@ CommandDispatcher::CommandDispatcher(GetSysInfoDelegate getSysInfo,
 	ApplyColorProgramDelegate applyColorProgram,
 	ApplySpeedColorProgramDelegate applySpeedColorProgram,
 	GetCurrentSpeedColorProgramDelegate getSpeedColorProgram,
-	DataEntityFactoryBase* dataEntityFactory)
+	DataEntityFactoryBase* dataEntityFactory,
+	GetCurrentColorColorProgramDelegate getColorProgram)
 {
 	_getSysInfo = getSysInfo;
 	_applyColorProgram = applyColorProgram;
 	_applySpeedColorProgram = applySpeedColorProgram;
 	_getSpeedColorProgram = getSpeedColorProgram;
 	_dataEntityFactory = dataEntityFactory;
+	_getColorProgram = getColorProgram;
 }
 
 CommandDispatcher::~CommandDispatcher()
@@ -40,13 +42,22 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 	switch (commandId)
 	{
 	case GetSystemInformationCommandId:
-	{		
-		auto res = GetResponse(_getSysInfo(), commandId);
-		return res;
+	{
+		return GetResponse(_getSysInfo(), commandId);
 	}
 	case GetSpeedColorProgramCommandId:
 	{
 		return GetResponse(_getSpeedColorProgram(), commandId);
+	}
+	case GetColorProgramCommandId:
+	{
+		auto program = _getColorProgram();
+		if(program == nullptr)
+		{
+			auto msg = "No color program defined";
+			return new CommandResult(GetColorProgramCommandId, msg, strlen(msg), true);
+		}
+		return GetResponse(program, commandId);
 	}
 	case UploadSpeedColorProgramCommandId:
 	{
@@ -79,7 +90,8 @@ CommandResult* CommandDispatcher::GetResponse(SerializableEntityBase* data, unsi
 	}
 
 	auto dataLength = data->GetDataSize();
-	auto buf = new char[dataLength];	
+	auto buf = new char[dataLength];
+
 	data->WriteDataToBuffer(buf);
 	delete data;
 	return new CommandResult(commandId, buf, dataLength, false);

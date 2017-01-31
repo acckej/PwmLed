@@ -9,8 +9,9 @@
 			UploadSpeedColorProgramCommandId = 5,
 			GetSystemInformationCommandId = 2,
 			GetSpeedColorProgramCommandId = 4,
-			ErrorCommandId = 10
-	}
+			ErrorCommandId = 10,
+			GetColorProgramCommandId = 11
+		}
 
 		public enum PacketType : byte
 		{

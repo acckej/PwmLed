@@ -41,6 +41,13 @@ namespace LedController.Adapters
 			NotifyDataSetChanged();
 		}
 
+		public void SetProgram(ColorProgram program)
+		{
+			_steps.Clear();
+			_steps.AddRange(program.Steps);
+			NotifyDataSetChanged();
+		}
+
 		public void Add(ColorProgramStep step)
 		{
 			_steps.Add(step);

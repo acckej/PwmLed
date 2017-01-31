@@ -13,6 +13,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 static SpeedColorProgramSettings* _speedColorProgram;
 static SystemInformation* _sysInfo;
+static ColorProgram* _colorProgram;
 
 namespace PwmLedUnitTests
 {
@@ -23,10 +24,10 @@ namespace PwmLedUnitTests
 		TEST_METHOD(DispatchGetSysInfoTest)
 		{
 			DataEntityFactory factory;
-			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory);
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
 
-			//_sysInfo = new SystemInformation(100500, 9000);
-			_sysInfo = new SystemInformation(0, 0);
+			_sysInfo = new SystemInformation(100500, 9000);
+			//_sysInfo = new SystemInformation(0, 0);
 			_speedColorProgram = nullptr;
 			
 			char buf[sizeof(unsigned char) * 2];
@@ -49,9 +50,9 @@ namespace PwmLedUnitTests
 			auto speed = DataSerializationHelper<ArduinoDouble>::GetDataFromArray(const_cast<char**>(&tempBuf));
 			auto voltage = DataSerializationHelper<ArduinoDouble>::GetDataFromArray(const_cast<char**>(&tempBuf));
 
-			//Assert::AreEqual(static_cast<ArduinoSize>(13), size);
-			//Assert::AreEqual(static_cast<ArduinoDouble>(100500), voltage);
-			//Assert::AreEqual(static_cast<ArduinoDouble>(9000), speed);
+			Assert::AreEqual(static_cast<ArduinoSize>(13), size);
+			Assert::AreEqual(static_cast<ArduinoDouble>(100500), voltage);
+			Assert::AreEqual(static_cast<ArduinoDouble>(9000), speed);
 			
 			auto dataSize = result->GetDataSize();
 			auto resultSerialized = new char[dataSize];
@@ -71,7 +72,7 @@ namespace PwmLedUnitTests
 		TEST_METHOD(DispatchGetSpeedColorProgramTest)
 		{
 			DataEntityFactory factory;
-			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory);
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
 
 			_sysInfo = nullptr;
 			_speedColorProgram = new SpeedColorProgramSettings();
@@ -115,7 +116,7 @@ namespace PwmLedUnitTests
 		TEST_METHOD(DispatchApplyColorProgramTest)
 		{
 			DataEntityFactory factory;
-			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory);
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
 
 			_sysInfo = nullptr;
 			_speedColorProgram = nullptr;
@@ -143,10 +144,52 @@ namespace PwmLedUnitTests
 			delete buf;
 		}
 
+		TEST_METHOD(DispatchApplyColorProgramTest2)
+		{
+			DataEntityFactory factory;
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
+
+			_sysInfo = nullptr;
+			_speedColorProgram = nullptr;
+
+			//08070200E8037BEA17F401DF867B
+			auto input = "070200E8037BEA17F401DF867B";
+			auto filledBuf = new char[strlen(input) / 2];
+
+			TestHelper::Hex2bin(input, filledBuf);
+			ColorProgram* program = new ColorProgram();
+			program->FillFromBuffer(filledBuf);
+
+			auto size = TestHelper::ProgramSize + sizeof(UploadColorProgramCommandId);
+			auto buf = new char[size];
+			memcpy(buf + sizeof(UploadColorProgramCommandId), filledBuf, TestHelper::ProgramSize);
+			buf[0] = UploadColorProgramCommandId;
+
+			auto step1 = program->GetNextStep();
+			auto step2 = program->GetNextStep();
+
+			auto hexString = TestHelper::HexStr(reinterpret_cast<unsigned char*>(buf), size);
+			
+			//Assert::AreEqual(std::string("08070200e8036478824c046e828c"), hexString);
+
+			auto result = dispatcher.ReceivePacket(buf);
+
+			Assert::IsNotNull(result);
+			auto message = result->GetMessage();
+
+			Assert::IsNull(message);
+			Assert::AreEqual(false, result->HasError());
+			auto dataSize = result->GetDataSize();
+
+			delete result;
+			delete program;
+			delete buf;
+		}
+
 		TEST_METHOD(DispatchApplySpeedColorProgramTest)
 		{
 			DataEntityFactory factory;
-			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory);
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
 
 			_sysInfo = nullptr;
 			_speedColorProgram = nullptr;
@@ -175,16 +218,51 @@ namespace PwmLedUnitTests
 			delete buf;
 		}
 
+		TEST_METHOD(DispatchGetColorProgramTest)
+		{
+			DataEntityFactory factory;
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
+
+			_sysInfo = nullptr;
+			_speedColorProgram = nullptr;
+
+			auto filled = TestHelper::GetFilledColorProgram();
+			ColorProgram* program = new ColorProgram();
+			program->FillFromBuffer(filled);
+			_colorProgram = program;
+
+			char buf[2]{ GetColorProgramCommandId, 9 };
+
+			auto result = dispatcher.ReceivePacket(buf);
+
+			Assert::IsNotNull(result);
+			auto message = result->GetMessage();
+
+			Assert::IsNotNull(message);
+			Assert::AreEqual(false, result->HasError());
+
+			auto hexString = TestHelper::HexStr((unsigned char*)result->GetMessage(), result->GetMessageLength());
+
+			delete filled;
+			delete result;
+		}
+
 	private:
 		static SerializableEntityBase* GetSysInfo();
 		static void ApplyColorProgram(DeserializableEntityBase*);
 		static void ApplySpeedColorProgram(DeserializableEntityBase*);
 		static SerializableEntityBase* GetCurrentSpeedColorProgram();
+		static SerializableEntityBase* GetColorProgram();
 	};
 
 	SerializableEntityBase* CommandDispatcherTests::GetSysInfo() 
 	{
 		return _sysInfo;
+	}
+
+	SerializableEntityBase* CommandDispatcherTests::GetColorProgram()
+	{
+		return _colorProgram;
 	}
 
 	void CommandDispatcherTests::ApplyColorProgram(DeserializableEntityBase* entity)

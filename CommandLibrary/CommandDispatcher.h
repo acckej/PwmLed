@@ -8,6 +8,7 @@ typedef SerializableEntityBase* (*GetSysInfoDelegate)();
 typedef void (*ApplyColorProgramDelegate)(DeserializableEntityBase*);
 typedef void (*ApplySpeedColorProgramDelegate)(DeserializableEntityBase*);
 typedef SerializableEntityBase* (*GetCurrentSpeedColorProgramDelegate)();
+typedef SerializableEntityBase* (*GetCurrentColorColorProgramDelegate)();
 
 class CommandDispatcher
 {
@@ -16,7 +17,8 @@ public:
 		ApplyColorProgramDelegate applyColorProgram,
 		ApplySpeedColorProgramDelegate applySpeedColorProgram,
 		GetCurrentSpeedColorProgramDelegate getSpeedColorProgram,
-		DataEntityFactoryBase* dataEntityFactory);
+		DataEntityFactoryBase* dataEntityFactory,
+		GetCurrentColorColorProgramDelegate getColorProgram);
 
 	~CommandDispatcher();
 
@@ -26,6 +28,7 @@ private:
 	ApplyColorProgramDelegate _applyColorProgram;
 	ApplySpeedColorProgramDelegate _applySpeedColorProgram;
 	GetCurrentSpeedColorProgramDelegate _getSpeedColorProgram;
+	GetCurrentColorColorProgramDelegate _getColorProgram;
 
 	DataEntityFactoryBase* _dataEntityFactory;
 

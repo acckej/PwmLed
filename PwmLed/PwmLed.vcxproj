@@ -89,6 +89,7 @@
     <ClInclude Include="DataEntityFactory.h" />
     <ClInclude Include="DataEntityFactoryBase.h" />
     <ClInclude Include="DataSerializationHelper.h" />
+    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DeserializableEntityBase.h" />
     <ClInclude Include="EepromHelper.h" />
     <ClInclude Include="EepromProvider.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="DataEntityFactory.cpp" />
     <ClCompile Include="DataEntityFactoryBase.cpp" />
     <ClCompile Include="DataSerializationHelper.cpp" />
+    <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DeserializableEntityBase.cpp" />
     <ClCompile Include="EepromHelper.cpp" />
     <ClCompile Include="EepromProvider.cpp" />

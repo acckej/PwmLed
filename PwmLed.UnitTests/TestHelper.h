@@ -23,6 +23,8 @@ public:
 
 	static std::string HexStr(unsigned char *data, int len);	
 
+	static char* HexChar(unsigned char *data, int len);
+
 	static void Hex2bin(const char* src, char* target);
 private:
 	static unsigned char Char2Byte(char input);

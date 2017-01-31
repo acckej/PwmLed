@@ -15,13 +15,15 @@ CommandDispatcher::CommandDispatcher(GetSysInfoDelegate getSysInfo,
 	ApplyColorProgramDelegate applyColorProgram, 
 	ApplySpeedColorProgramDelegate applySpeedColorProgram,
 	GetCurrentSpeedColorProgramDelegate getSpeedColorProgram,
-	DataEntityFactoryBase* dataEntityFactory)
+	DataEntityFactoryBase* dataEntityFactory,
+	GetCurrentColorColorProgramDelegate getColorProgram)
 {
 	_getSysInfo = getSysInfo;
 	_applyColorProgram = applyColorProgram;
 	_applySpeedColorProgram = applySpeedColorProgram;
 	_getSpeedColorProgram = getSpeedColorProgram;
 	_dataEntityFactory = dataEntityFactory;
+	_getColorProgram = getColorProgram;
 }
 
 CommandDispatcher::~CommandDispatcher()
@@ -47,6 +49,16 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 	{
 		return GetResponse(_getSpeedColorProgram(), commandId);
 	}
+	case GetColorProgramCommandId:
+	{
+		auto program = _getColorProgram();
+		if (program == nullptr)
+		{
+			auto msg = "No color program defined";
+			return new CommandResult(GetColorProgramCommandId, msg, strlen(msg), true);
+		}
+		return GetResponse(_getColorProgram(), commandId);
+	}
 	case UploadSpeedColorProgramCommandId:
 	{
 		auto data = cmd.GetData();
@@ -58,7 +70,7 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 		auto data = cmd.GetData();
 		_applyColorProgram(data);
 	}
-	break;
+	break;	
 	default:
 	{
 		ErrorHandlingHelper::HandleError("Unrecognized commandId: %i", commandId);

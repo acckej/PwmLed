@@ -47,6 +47,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/btnTest" />
+            <Button
+                android:text="Get"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/btnGetProgram" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

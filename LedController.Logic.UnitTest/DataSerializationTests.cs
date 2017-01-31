@@ -30,8 +30,9 @@ namespace LedController.Logic.UnitTest
 		[TestMethod]
 		public void GetTelemetryCommandSerializationTest()
 		{
-			var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
+			var cmd = new Command(Constants.CommandType.GetSystemInformationCommandId);
 			var serialized = cmd.Serialize();
+			Assert.IsNotNull(serialized);
 		}
 
 		[TestMethod]
@@ -99,6 +100,76 @@ namespace LedController.Logic.UnitTest
 			var str = DataOperationsHelper.ByteArrayToString(serialized);
 
 			Assert.IsFalse(string.IsNullOrEmpty(str));
+		}
+
+		[TestMethod]
+		public void SerializeColorProgramTest2()
+		{
+			var program = new ColorProgram();
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 23,
+				Red = 123,
+				Green = 234,
+				Delay = 1000
+			});
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 123,
+				Red = 223,
+				Green = 134,
+				Delay = 500
+			});
+
+			var ser = program.Serialize();
+			Assert.IsNotNull(ser);
+			var hex = DataOperationsHelper.ByteArrayToString(ser);
+			//070200E8037BEA17F401DF867B
+			Assert.AreEqual("070200E8037BEA17F401DF867B", hex);
+		}
+
+		[TestMethod]
+		public void UploadColorProgramSerializationTest()
+		{
+			var program = new ColorProgram();
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 23,
+				Red = 123,
+				Green = 234,
+				Delay = 1000
+			});
+
+			program.Add(new ColorProgramStep
+			{
+				Blue = 123,
+				Red = 223,
+				Green = 134,
+				Delay = 500
+			});
+
+			var cmd = new Command(Constants.CommandType.UploadColorProgramCommandId, program);
+
+			var ser = cmd.Serialize();
+			var hex = DataOperationsHelper.ByteArrayToString(ser);
+			Assert.AreEqual("08070200E8037BEA17F401DF867B", hex);
+		}
+
+		[TestMethod]
+		public void DeserializeColorProgramTest()
+		{
+			//070200E8037BEA17F401DF867B
+			//070200e8036478824c046e828c
+			const string packet = "070200E8037BEA17F401DF867B";
+			var data = DataOperationsHelper.StringToByteArray(packet);
+
+			var program = new ColorProgram();
+			program.Deserialize(data);
+
+			Assert.AreEqual(2, program.Steps.Length);
 		}
 	}
 }
