@@ -43,7 +43,7 @@ namespace LedController.Fragments
 			{
 				_btManager = BluetoothManager.Current;
 				var cmd = new Command(Logic.Constants.CommandType.GetSystemInformationCommandId);
-				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize(), CommandResult.GetExpectedDataSize);
 				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
 
 				if (result.HasError)

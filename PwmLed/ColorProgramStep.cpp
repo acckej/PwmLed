@@ -2,7 +2,7 @@
 #include "DataSerializationHelper.h"
 
 
-ColorProgramStep::ColorProgramStep(): _delay(0), _red(0), _green(0), _blue(0)
+ColorProgramStep::ColorProgramStep() : _delay(0), _red(0), _green(0), _blue(0)
 {
 }
 
@@ -12,7 +12,7 @@ ColorProgramStep::~ColorProgramStep()
 }
 
 void ColorProgramStep::FillFromBuffer(char* buffer)
-{	
+{
 	auto tempBuffer = buffer;
 	_delay = DataSerializationHelper<ArduinoInt>::GetDataFromArray(&tempBuffer);
 	_red = DataSerializationHelper<unsigned char>::GetDataFromArray(&tempBuffer);

@@ -29,6 +29,7 @@ namespace LedController
 		{
 			base.OnCreate(savedInstanceState);
 			var cPickerView = new RoundColorPickerView(Context, _initialColor);
+			
 			cPickerView.ColorChanged += delegate(object sender, ColorChangedEventArgs args)
 			{
 				ColorChanged?.Invoke(this, args);

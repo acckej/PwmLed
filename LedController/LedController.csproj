@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\ColorProgramStepAdapter.cs" />
+    <Compile Include="Adapters\ColorStepWrapper.cs" />
     <Compile Include="Bluetooth\BluetoothManager.cs" />
     <Compile Include="ColorPickerDialog.cs" />
     <Compile Include="Constants.cs" />

@@ -3,7 +3,7 @@
 #include "ErrorHandlingHelper.h"
 
 
-ColorProgram::ColorProgram(): _program(nullptr), _numberOfSteps(0), _stepsCounter(0)
+ColorProgram::ColorProgram() : _program(nullptr), _numberOfSteps(0), _stepsCounter(0)
 {
 }
 
@@ -15,15 +15,15 @@ ColorProgram::~ColorProgram()
 
 ColorProgramStep ColorProgram::GetNextStep()
 {
-	if(_program == nullptr)
+	if (_program == nullptr)
 	{
 		ErrorHandlingHelper::HandleError("No color program defined");
 	}
 
-	if(_stepsCounter + 1 > _numberOfSteps)
+	if (_stepsCounter + 1 > _numberOfSteps)
 	{
 		_stepsCounter = 0;
-	}	
+	}
 
 	return *_program[_stepsCounter++];
 }
@@ -44,18 +44,18 @@ void ColorProgram::Reset()
 }
 
 void ColorProgram::FillFromBuffer(char* buffer)
-{	
+{
 	auto tempBuffer = buffer;
 	auto packetId = DataSerializationHelper<unsigned char>::GetDataFromArray(&tempBuffer);
 
-	if(packetId != ColorProgramPacketId)
+	if (packetId != ColorProgramPacketId)
 	{
 		ErrorHandlingHelper::HandleError("Invalid packet id %i, expected ColorProgramPacketId", packetId);
 	}
 
 	_numberOfSteps = DataSerializationHelper<ArduinoInt>::GetDataFromArray(&tempBuffer);
 
-	if(_numberOfSteps < 0 || _numberOfSteps > NumberOfStepsMax)
+	if (_numberOfSteps < 0 || _numberOfSteps > NumberOfStepsMax)
 	{
 		ErrorHandlingHelper::HandleError("Invalid number of steps id %i", _numberOfSteps);
 	}
@@ -64,7 +64,7 @@ void ColorProgram::FillFromBuffer(char* buffer)
 
 	_program = new ColorProgramStep*[_numberOfSteps];
 
-	for(auto i = 0; i < _numberOfSteps; i++)
+	for (auto i = 0; i < _numberOfSteps; i++)
 	{
 		auto step = new ColorProgramStep();
 		_program[i] = step;

@@ -76,7 +76,9 @@ namespace PwmLedUnitTests
 
 		TEST_METHOD(ColorProgramDeserializationTest)
 		{
-			auto input = "070300040002030108000607059001C8FA64";
+			//070300040002030108000607059001C8FA64
+			//070300e8037bea17e803ff7c00e8030032ff
+			auto input = "070300e8037bea17e803ff7c00e8030032ff";
 			auto filledBuf = new char[strlen(input) / 2];
 			TestHelper::Hex2bin(input, filledBuf);
 			
@@ -119,6 +121,36 @@ namespace PwmLedUnitTests
 
 			Assert::AreEqual(TestHelper::StepsCount, counter);
 
+			delete filledBuf;
+		}
+
+		TEST_METHOD(ColorProgramSerializeTest)
+		{
+			auto filledBuf = TestHelper::GetFilledColorProgram();
+
+			auto program = new ColorProgram();
+
+			program->FillFromBuffer(filledBuf);
+
+			Assert::AreEqual(TestHelper::StepsCount, program->GetNumberOfSteps());
+
+			auto counter = static_cast<ArduinoInt>(0);
+
+			do
+			{
+				auto step = program->GetNextStep();
+				counter++;
+			} while (!program->IsLastStep() && counter <= NumberOfStepsMax);
+
+			Assert::AreEqual(TestHelper::StepsCount, counter);			
+			
+			char serialize[512];
+			program->WriteDataToBuffer(serialize);
+
+			auto str = TestHelper::HexStr(reinterpret_cast<unsigned char*>(serialize), program->GetDataSize());
+			auto str2 = TestHelper::HexStr(reinterpret_cast<unsigned char*>(filledBuf), TestHelper::ProgramSize);
+			
+			delete program;
 			delete filledBuf;
 		}
 

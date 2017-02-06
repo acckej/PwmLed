@@ -93,7 +93,7 @@ CommandResult* CommandDispatcher::GetResponse(SerializableEntityBase* data, unsi
 	auto buf = new char[dataLength];
 
 	data->WriteDataToBuffer(buf);
-	delete data;
+	
 	return new CommandResult(commandId, buf, dataLength, false);
 }
 

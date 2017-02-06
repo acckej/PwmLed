@@ -29,7 +29,7 @@ namespace LedController.Logic.Entities
 
 			if (size.Value != buffer.Length)
 			{
-				throw new ApplicationException($"Invalid packet size: { size }, expected { buffer.Length }");
+				throw new ApplicationException($"Invalid packet size: { buffer.Length }, expected { size }");
 			}
 
 			ArduinoByte commandId = new ArduinoByte();
@@ -62,6 +62,30 @@ namespace LedController.Logic.Entities
 				
 				_message = null;
 			}
+		}
+
+		public static int GetExpectedDataSize(byte[] header)
+		{
+			var offset = 0;
+			var packetType = new ArduinoByte();
+			var size = new ArduinoSize();
+			var headerSize = packetType.Size + size.Size;
+
+			if (header.Length < headerSize)
+			{
+				return -1;
+			}
+
+			offset = SerializationHelper.ReadFromBuffer(header, offset, packetType);
+
+			if (packetType.Value != (byte)Constants.PacketType.CommandResultPacketId)
+			{
+				throw new ApplicationException($"Invalid packet id: { packetType }");
+			}
+
+			SerializationHelper.ReadFromBuffer(header, offset, size);
+			
+			return size.Value;
 		}
 
 		public Constants.CommandType CommandType => _commandType;

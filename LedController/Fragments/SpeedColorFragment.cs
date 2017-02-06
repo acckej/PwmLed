@@ -15,6 +15,7 @@ namespace LedController.Fragments
 	public class SpeedColorFragment : Fragment
 	{
 		private View _view;
+		private BluetoothManager _btManager;
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
@@ -74,18 +75,17 @@ namespace LedController.Fragments
 		{
 			try
 			{
-				using (var bm = BluetoothManager.Current)
+				_btManager = BluetoothManager.Current;
+
+				var settings = FillDataEntityFromUi();
+
+				var cmd = new Command(Logic.Constants.CommandType.UploadSpeedColorProgramCommandId, settings);
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize(), CommandResult.GetExpectedDataSize);
+				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+				if (result.HasError)
 				{
-					var settings = FillDataEntityFromUi();
-
-					var cmd = new Command(Logic.Constants.CommandType.UploadSpeedColorProgramCommandId, settings);
-					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
-					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
-
-					if (result.HasError)
-					{
-						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
-					}
+					ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
 				}
 			}
 			catch (Exception ex)
@@ -98,26 +98,25 @@ namespace LedController.Fragments
 		{
 			try
 			{
-				using (var bm = BluetoothManager.Current)
+				_btManager = BluetoothManager.Current;
+
+				var cmd = new Command(Logic.Constants.CommandType.GetSpeedColorProgramCommandId);
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize(), CommandResult.GetExpectedDataSize);
+				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
+
+				if (result.HasError)
 				{
-					var cmd = new Command(Logic.Constants.CommandType.GetSpeedColorProgramCommandId);
-					var resultData = bm.SendCommandAndGetResponse(cmd.Serialize());
-					var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
-
-					if (result.HasError)
+					ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+				}
+				else
+				{
+					var data = result.Data as SpeedColorProgramSettings;
+					if (data == null)
 					{
-						ErrorHandler.HandleErrorWithMessageBox($"Command error: {result.Message}", _view.Context);
+						throw new ApplicationException("Wrong response type");
 					}
-					else
-					{
-						var data = result.Data as SpeedColorProgramSettings;
-						if (data == null)
-						{
-							throw new ApplicationException("Wrong response type");
-						}
 
-						FillUiFromDataEntity(data);
-					}
+					FillUiFromDataEntity(data);
 				}
 			}
 			catch (Exception ex)
@@ -201,7 +200,7 @@ namespace LedController.Fragments
 
 		private double Gaussian(double sigma, double mu, double x)
 		{
-			var result = 1 / sigma * Math.Sqrt(2 * Math.PI) * Math.Exp(-1 * Math.Pow(x - mu, 2) / 2 * Math.Pow(sigma, 2));
+			var result = 1 / (sigma * Math.Sqrt(2 * Math.PI)) * Math.Exp(-1 * Math.Pow(x - mu, 2) / (2 * Math.Pow(sigma, 2)));
 
 			return result;
 		}
@@ -291,6 +290,21 @@ namespace LedController.Fragments
 
 			var colorChange = _view.FindViewById<SeekBar>(Resource.Id.slColorChange);
 			colorChange.Progress = settings.ColorChangePeriod;
+		}
+
+		public override void OnPause()
+		{
+			Cleanup();
+			base.OnPause();
+		}
+
+		private void Cleanup()
+		{
+			if (_btManager != null)
+			{
+				_btManager.Dispose();
+				_btManager = null;
+			}
 		}
 
 		private SpeedColorProgramSettings FillDataEntityFromUi()

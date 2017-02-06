@@ -22,11 +22,7 @@ Command::Command(char* buffer, DataEntityFactoryBase* dataEntityFactory)
 }
 
 Command::~Command()
-{
-	if(_data != nullptr)
-	{
-		delete _data;
-	}
+{	
 }
 
 DeserializableEntityBase* Command::GetData() const

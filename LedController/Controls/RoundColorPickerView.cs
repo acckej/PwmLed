@@ -26,7 +26,7 @@ namespace LedController.Controls
                 _paint = new Paint(PaintFlags.AntiAlias);
                 _paint.SetShader(s);
                 _paint.SetStyle(Paint.Style.Stroke);
-                _paint.StrokeWidth = 32;
+                _paint.StrokeWidth = 64;
             }
 
             _centerPaint = new Paint(PaintFlags.AntiAlias)
@@ -69,8 +69,8 @@ namespace LedController.Controls
             SetMeasuredDimension(CenterX * 2, CenterY * 2);
         }
 
-        private const int CenterX = 100;
-        private const int CenterY = 100;
+        private const int CenterX = 200;
+        private const int CenterY = 200;
         private const int CenterRadius = 64;
 
         private static int Ave(int s, int d, float p)

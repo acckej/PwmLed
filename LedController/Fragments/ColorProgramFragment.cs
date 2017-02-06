@@ -83,18 +83,8 @@ namespace LedController.Fragments
 			{
 				_btManager = BluetoothManager.Current;
 
-				if (_listAdapter.Count == 0)
-				{
-					return;
-				}
-				var program = new ColorProgram();
-				foreach (var step in _listAdapter.Steps)
-				{
-					program.Add(step);
-				}
-
 				var cmd = new Command(Logic.Constants.CommandType.GetColorProgramCommandId);
-				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize(), CommandResult.GetExpectedDataSize);
 				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
 
 				if (result.HasError)
@@ -111,6 +101,7 @@ namespace LedController.Fragments
 				}
 
 				_listAdapter.SetProgram(colorProgram);
+				SetNoStepsDefined(colorProgram.Steps.Length == 0);
 			}
 			catch (Exception ex)
 			{
@@ -186,7 +177,7 @@ namespace LedController.Fragments
 				}
 
 				var cmd = new Command(Logic.Constants.CommandType.UploadColorProgramCommandId, program);
-				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize());
+				var resultData = _btManager.SendCommandAndGetResponse(cmd.Serialize(), CommandResult.GetExpectedDataSize);
 				var result = CommandDispatcher.GetCommandResultFromByteArray(resultData);
 
 				if (result.HasError)
@@ -255,6 +246,11 @@ namespace LedController.Fragments
 
 		public override void OnPause()
 		{
+			if (_btManager != null)
+			{
+				_btManager.Dispose();
+				_btManager = null;
+			}
 			_steps = _listAdapter.Steps;
 			_testing = false;
 			base.OnPause();

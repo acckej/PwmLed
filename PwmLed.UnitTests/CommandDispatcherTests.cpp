@@ -272,6 +272,8 @@ namespace PwmLedUnitTests
 		Assert::IsNotNull(data);
 		Assert::AreEqual(static_cast<ArduinoInt>(2), data->GetNumberOfSteps());
 		Assert::AreEqual(static_cast<int>(TestHelper::ProgramSize), static_cast<int>(data->GetDataSize()));	
+
+		delete entity;
 	}
 
 	void CommandDispatcherTests::ApplySpeedColorProgram(DeserializableEntityBase* entity)
@@ -279,6 +281,8 @@ namespace PwmLedUnitTests
 		auto data = reinterpret_cast<SpeedColorProgramSettings*>(entity);
 
 		Assert::IsNotNull(data);
+
+		delete entity;
 	}
 
 	SerializableEntityBase* CommandDispatcherTests::GetCurrentSpeedColorProgram()

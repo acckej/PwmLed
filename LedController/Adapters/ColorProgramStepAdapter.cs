@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Android.Graphics;
 using Android.Views;
 using Android.Widget;
@@ -16,8 +17,14 @@ namespace LedController.Adapters
 		public event ColorBoxClicked OnColorBoxClicked;
 		public ColorProgramStepAdapter(IList<ColorProgramStep> steps)
 		{
-			_steps = new List<ColorProgramStep>();
-			_steps.AddRange(steps);
+			_steps = new List<ColorStepWrapper>();
+			_steps.AddRange(steps.Select(step => new ColorStepWrapper
+			{
+				Delay = step.Delay,
+				Green = step.Green,
+				Blue = step.Blue,
+				Red = step.Red
+			}));
 		}
 
 		public override long GetItemId(int position)
@@ -44,13 +51,25 @@ namespace LedController.Adapters
 		public void SetProgram(ColorProgram program)
 		{
 			_steps.Clear();
-			_steps.AddRange(program.Steps);
+			_steps.AddRange(program.Steps.Select(step => new ColorStepWrapper
+			{
+				Delay = step.Delay,
+				Green = step.Green,
+				Blue = step.Blue,
+				Red = step.Red
+			}));
 			NotifyDataSetChanged();
 		}
 
 		public void Add(ColorProgramStep step)
 		{
-			_steps.Add(step);
+			_steps.Add(new ColorStepWrapper
+			{
+				Delay= step.Delay,
+				Green = step.Green,
+				Blue = step.Blue,
+				Red = step.Red
+			});
 			NotifyDataSetChanged();
 		}
 
@@ -71,21 +90,30 @@ namespace LedController.Adapters
 
 			delay.Text = step.Delay.ToString();
 			text.SetBackgroundColor(new Color(step.Red, step.Green, step.Blue));
+			text.Text = position.ToString();
 
 			text.Click += (sender, args) =>
 			{
 				OnColorBoxClicked?.Invoke(position);
 			};
 
+			delay.TextChanged += step.Delay_TextChanged;
+			step.Context = parent.Context;
+			
 			return view;
 		}
 
-		public ColorProgramStep[] Steps => _steps.ToArray();
-
+		public ColorProgramStep[] Steps => _steps.Select(s => new ColorProgramStep
+		{
+			Delay = s.Delay,
+			Blue = s.Blue,
+			Green = s.Green,
+			Red = s.Red
+		}).ToArray();
+		
 		public override int Count => _steps.Count;
 
 		public override ColorProgramStep this[int position] => _steps[position];
-
-		private readonly List<ColorProgramStep> _steps;
+		private readonly List<ColorStepWrapper> _steps;
 	}
 }

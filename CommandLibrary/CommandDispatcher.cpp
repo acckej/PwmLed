@@ -57,7 +57,7 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 			auto msg = "No color program defined";
 			return new CommandResult(GetColorProgramCommandId, msg, strlen(msg), true);
 		}
-		return GetResponse(_getColorProgram(), commandId);
+		return GetResponse(program, commandId);
 	}
 	case UploadSpeedColorProgramCommandId:
 	{
@@ -93,7 +93,7 @@ CommandResult* CommandDispatcher::GetResponse(SerializableEntityBase* data, unsi
 	auto buf = new char[dataLength];
 
 	data->WriteDataToBuffer(buf);
-	delete data;
+	
 	return new CommandResult(commandId, buf, dataLength, false);
 }
 
