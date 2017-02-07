@@ -184,35 +184,23 @@ void ApplySpeedColorProgram(DeserializableEntityBase* entity)
 {
 	auto updated = EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
 
-	if (updated != nullptr)
+	Serial.println("asc");
+	UpdateSpeedColorSettings(updated);
+
+	if (_currentSpeedColorProgram != nullptr)
 	{
-		_distance = updated->GetDistance();
-		_sigmaBlue = updated->GetSigmaBlue();
-		_sigmaGreen = updated->GetSigmaGreen();
-		_sigmaRed = updated->GetSigmaRed();
-		_blinkDelay = updated->GetBlinkDelay();
-		_colorChangePeriod = updated->GetColorChangePeriod();
-		_muBlue = updated->GetMuBlue();
-		_muRed = updated->GetMuRed();
-		_muGreen = updated->GetMuGreen();
-		_notMovingDelay = updated->GetNotMovingDelay();
-		_topSpeed = updated->GetTopSpeed();
-
-		_currentMode = SpeedColorMode;
-
-		if(_currentSpeedColorProgram != nullptr)
-		{
-			delete _currentSpeedColorProgram;
-		}
-		
-		_currentSpeedColorProgram = updated;
+		delete _currentSpeedColorProgram;
 	}
+
+	Serial.println("upd2");
+	_currentSpeedColorProgram = updated;
 }
 
 void UpdateSpeedColorSettings(SpeedColorProgramSettings* updated)
 {
 	if (updated != nullptr)
 	{
+		Serial.println("upd");
 		_distance = updated->GetDistance();
 		_sigmaBlue = updated->GetSigmaBlue();
 		_sigmaGreen = updated->GetSigmaGreen();

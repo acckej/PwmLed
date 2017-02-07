@@ -75,6 +75,9 @@ namespace LedController
 			// aapt resource value: 0x7f050008
 			public const int btnAdd = 2131034120;
 			
+			// aapt resource value: 0x7f050028
+			public const int btnDefaults = 2131034152;
+			
 			// aapt resource value: 0x7f05000d
 			public const int btnDelete = 2131034125;
 			
@@ -84,8 +87,8 @@ namespace LedController
 			// aapt resource value: 0x7f050027
 			public const int btnGetSpeedColor = 2131034151;
 			
-			// aapt resource value: 0x7f05002d
-			public const int btnGetTelemetry = 2131034157;
+			// aapt resource value: 0x7f05002e
+			public const int btnGetTelemetry = 2131034158;
 			
 			// aapt resource value: 0x7f050004
 			public const int btnSendTerminalMessage = 2131034116;
@@ -96,11 +99,11 @@ namespace LedController
 			// aapt resource value: 0x7f050007
 			public const int btnUpload = 2131034119;
 			
-			// aapt resource value: 0x7f050028
-			public const int btnUploadSpeedColor = 2131034152;
+			// aapt resource value: 0x7f050029
+			public const int btnUploadSpeedColor = 2131034153;
 			
-			// aapt resource value: 0x7f05002c
-			public const int cbAutoUpdate = 2131034156;
+			// aapt resource value: 0x7f05002d
+			public const int cbAutoUpdate = 2131034157;
 			
 			// aapt resource value: 0x7f05000e
 			public const int flMain = 2131034126;
@@ -135,14 +138,14 @@ namespace LedController
 			// aapt resource value: 0x7f050015
 			public const int lblSigma = 2131034133;
 			
-			// aapt resource value: 0x7f05002b
-			public const int lblSpeed = 2131034155;
+			// aapt resource value: 0x7f05002c
+			public const int lblSpeed = 2131034156;
 			
 			// aapt resource value: 0x7f050011
 			public const int lblTestSpeed = 2131034129;
 			
-			// aapt resource value: 0x7f050029
-			public const int lblVoltage = 2131034153;
+			// aapt resource value: 0x7f05002a
+			public const int lblVoltage = 2131034154;
 			
 			// aapt resource value: 0x7f050000
 			public const int linearLayout1 = 2131034112;
@@ -153,8 +156,8 @@ namespace LedController
 			// aapt resource value: 0x7f050005
 			public const int lvColorProgram = 2131034117;
 			
-			// aapt resource value: 0x7f05002a
-			public const int pbVoltage = 2131034154;
+			// aapt resource value: 0x7f05002b
+			public const int pbVoltage = 2131034155;
 			
 			// aapt resource value: 0x7f05000f
 			public const int scrollView1 = 2131034127;

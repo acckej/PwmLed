@@ -5,21 +5,20 @@ namespace LedController
 		public static class SpeedColor
 		{
 			public const int DefaultWheelCircle = 2350;
-			public const int DefaultMaxSpeed = 4167;
-			public const int MaxSpeed = 10000;
+			public const int DefaultMaxSpeed = 41670;
+			public const int MaxSpeed = 100000;
+			
 			public const int MinSpeed = 500;
-
-			public const int CoefficientsSliderMaxValue = 10000;
-			public const int CoefficientsSliderMultiplier = 1000;
-			public const int SpeedSliderMultiplier = 1000;
-
-			public const int DefaultMuRed = 1042;
-			public const int DefaultMuGreen = 2083;
+			
+			public const int CoefficientsSliderMultiplier = 10000;
+			
+			public const int DefaultMuRed = 10420;
+			public const int DefaultMuGreen = 20830;
 			public const int DefaultMuBlue = 0;
 
-			public const int DefaultSigmaRed = 1042;
-			public const int DefaultSigmaGreen = 1042;
-			public const int DefaultSigmaBlue = 2083;
+			public const int DefaultSigmaRed = 10420;
+			public const int DefaultSigmaGreen = 10402;
+			public const int DefaultSigmaBlue = 20830;
 
 			public const int DefaultColorChangePeriod = 1000;
 			public const int MinColorChangePeriod = 100;

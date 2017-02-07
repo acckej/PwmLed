@@ -141,6 +141,11 @@
                     android:layout_height="match_parent"
                     android:id="@+id/btnGetSpeedColor" />
                 <Button
+                    android:text="Defaults"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/btnDefaults" />
+                <Button
                     android:text="Upload"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -15,6 +15,7 @@ namespace LedController.Bluetooth
 		public const int Timeout = 2000;
 		public const int DataChunkWaitingTimeout = 2000;
 		public const int WorkerThreadWaitingInterval = 100;
+		public const int MinimumBytesNeeded = 2;
 
 		private static BluetoothManager _current;
 
@@ -147,20 +148,25 @@ namespace LedController.Bluetooth
 					
 					lock (_accumulator)
 					{
+						Log.Debug("WorkerThread", $"accumulator1 {_accumulator.Count}");
 						if (_accumulator.Count == 0)
 						{
 							expectedLength = 0;
 						}
+
+						Log.Debug("WorkerThread", $"ln {ln}");
+					
 						_accumulator.AddRange(buffer.Take(ln));
-						if (expectedLength == 0 || expectedLength == -1)
+						if (_accumulator.Count >= MinimumBytesNeeded && (expectedLength == 0 || expectedLength == -1))
 						{
 							expectedLength = getExpectedLength(_accumulator.ToArray());
 						}
-
+						Log.Debug("WorkerThread", $"expectedLength {expectedLength}");
 						if (expectedLength > 0 && _accumulator.Count >= expectedLength)
 						{
 							_signal.Set();
 						}
+						Log.Debug("WorkerThread", $"accumulator2 {_accumulator.Count}");
 					}
 				}
 				while (!cancel.WaitHandle.WaitOne(WorkerThreadWaitingInterval));
