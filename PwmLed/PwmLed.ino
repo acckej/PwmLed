@@ -81,7 +81,8 @@ void setup()
 	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
 
 	attachInterrupt(0, Update, RISING);
-	BTserial.begin(9600);
+	//BTserial.begin(9600);
+	BTserial.begin(38400);
 	ErrorHandlingHelper::ErrorHandler = HandleError;
 
 	_currentSystemInformation = new SystemInformation(0, 0);
@@ -89,30 +90,6 @@ void setup()
 
 void loop()
 {	
-	/*char buf[100];
-	for(int i = 0; i < 100; i++)
-	{
-		buf[i] = EEPROM.read(COLORPROGRAM_FLAG_ADDRESS + i);		
-	}	
-	auto packet = DebugHelper::HexChar(static_cast<char*>(buf), 100);
-	Serial.println(packet);
-	delete packet;*/
-
-	/*if(	_currentColorProgram != nullptr)
-	{
-		Serial.print(_currentColorProgram->GetNumberOfSteps());
-		auto step = _currentColorProgram->GetNextStep();
-		Serial.print("__");
-		Serial.print(step.GetDelay());
-		step = _currentColorProgram->GetNextStep();
-		Serial.print("--");
-		Serial.print(step.GetDelay());
-	}
-	else
-	{
-		Serial.print("clean");
-	}*/	
-
 	ReceiveCommand();
 
 	digitalWrite(BLINK_PIN, HIGH);
@@ -390,17 +367,6 @@ void SetColor(double currentSpeed, double threshold)
 	analogWrite(RED_PIN, red);
 	analogWrite(GREEN_PIN, green);
 	analogWrite(BLUE_PIN, blue);
-
-	/*
-	Serial.print(_currentSpeed, DEC);
-	Serial.print(" ");
-	Serial.print(red, DEC);
-	Serial.print(" ");
-	Serial.print(green, DEC);
-	Serial.print(" ");
-	Serial.print(blue, DEC);
-	Serial.println();
-	//*/
 }
 
 

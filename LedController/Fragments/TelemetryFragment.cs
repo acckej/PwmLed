@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LedController.Bluetooth;
@@ -34,10 +35,10 @@ namespace LedController.Fragments
 
 		private void BtnGet_Click(object sender, EventArgs e)
 		{
-			DownloadAndUpdate();
+			DownloadAndUpdate(true);
 		}
 
-		private void DownloadAndUpdate()
+		private void DownloadAndUpdate(bool showMessageBox)
 		{
 			try
 			{
@@ -63,7 +64,14 @@ namespace LedController.Fragments
 			}
 			catch (Exception ex)
 			{
-				ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+				if (showMessageBox)
+				{
+					ErrorHandler.HandleErrorWithMessageBox(ex.Message, _view.Context);
+				}
+				else
+				{
+					Log.Error("TelemetryAuto", ex.ToString());
+				}
 			}
 		}
 
@@ -77,7 +85,7 @@ namespace LedController.Fragments
 				get.Enabled = false;
 				_updater = new Task(() =>
 				{
-					DownloadAndUpdate();
+					DownloadAndUpdate(false);
 					Thread.Sleep(Constants.Telemetry.UpdatePeriod);
 				}, _autoUpdate.Token);
 				_updater.Start();

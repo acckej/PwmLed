@@ -11,7 +11,7 @@ namespace LedController.Bluetooth
 {
 	public class BluetoothManager : IDisposable
 	{
-		public const string DeviceName = "HC-06";
+		public const string DeviceName = "Kurka";
 		public const int Timeout = 2000;
 		public const int DataChunkWaitingTimeout = 2000;
 		public const int WorkerThreadWaitingInterval = 100;
