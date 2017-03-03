@@ -30,7 +30,7 @@ CommandDispatcher::~CommandDispatcher()
 {
 }
 
-CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
+CommandResult* CommandDispatcher::ReceivePacket(char* packet, ArduinoSize packetSize) const
 {
 	CommandResult* result;
 	unsigned char commandId ;
@@ -38,6 +38,16 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 	Command cmd(packet, _dataEntityFactory);
 
 	commandId = cmd.GetCommandId();
+	auto data = cmd.GetData();
+	if(data!= nullptr)
+	{
+		ArduinoSize size = sizeof(commandId) + data->GetDataSize();
+		if(packetSize != size)
+		{
+			auto msg = "Expected and actual command length do not match";
+			return new CommandResult(ErrorCommandId, msg, static_cast<ArduinoSize>(strlen(msg)), true);
+		}
+	}
 
 	switch (commandId)
 	{
@@ -60,14 +70,12 @@ CommandResult* CommandDispatcher::ReceivePacket(char* packet) const
 		return GetResponse(program, commandId);
 	}
 	case UploadSpeedColorProgramCommandId:
-	{
-		auto data = cmd.GetData();
+	{		
 		_applySpeedColorProgram(data);
 	}
 	break;
 	case UploadColorProgramCommandId:
-	{
-		auto data = cmd.GetData();
+	{		
 		_applyColorProgram(data);
 	}
 	break;	

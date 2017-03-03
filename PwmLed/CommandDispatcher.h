@@ -22,7 +22,7 @@ public:
 
 	~CommandDispatcher();
 
-	CommandResult* ReceivePacket(char* packet) const;
+	CommandResult* ReceivePacket(char* packet, ArduinoSize packetSize) const;
 private:
 	GetSysInfoDelegate _getSysInfo;
 	ApplyColorProgramDelegate _applyColorProgram;

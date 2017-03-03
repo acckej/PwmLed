@@ -27,11 +27,6 @@ Command::~Command()
 
 DeserializableEntityBase* Command::GetData() const
 {
-	if(_data == nullptr)
-	{
-		ErrorHandlingHelper::HandleError("Data was not obtained");
-	}
-
 	return _data;
 }
 

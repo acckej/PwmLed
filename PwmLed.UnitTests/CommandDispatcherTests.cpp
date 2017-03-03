@@ -30,11 +30,12 @@ namespace PwmLedUnitTests
 			//_sysInfo = new SystemInformation(0, 0);
 			_speedColorProgram = nullptr;
 			
-			char buf[sizeof(unsigned char) * 2];
+			const int dataLength = sizeof(unsigned char) * 2;
+			char buf[dataLength];
 			buf[0] = GetSystemInformationCommandId;
 			buf[1] = EmptyDataPacketId;
 
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, dataLength);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();
@@ -78,11 +79,12 @@ namespace PwmLedUnitTests
 			_speedColorProgram = new SpeedColorProgramSettings();
 			_speedColorProgram->SetData(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 
-			char buf[sizeof(unsigned char) * 2];
+			const int dataLength = sizeof(unsigned char) * 2;
+			char buf[dataLength];
 			buf[0] = GetSpeedColorProgramCommandId;
 			buf[1] = EmptyDataPacketId;
 			
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, dataLength);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();
@@ -131,13 +133,44 @@ namespace PwmLedUnitTests
 			//08070200e8036478824c046e828c
 			Assert::AreEqual(std::string("08070200e8036478824c046e828c"), hexString);
 			
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, size);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();
 
 			Assert::IsNull(message);
 			Assert::AreEqual(false, result->HasError());
+
+			delete result;
+			delete program;
+			delete buf;
+		}
+
+		TEST_METHOD(DispatchApplyColorProgramTest_WrongDataSize)
+		{
+			DataEntityFactory factory;
+			CommandDispatcher dispatcher(GetSysInfo, ApplyColorProgram, ApplySpeedColorProgram, GetCurrentSpeedColorProgram, &factory, GetColorProgram);
+
+			_sysInfo = nullptr;
+			_speedColorProgram = nullptr;
+
+			auto program = TestHelper::GetFilledColorProgram();
+			auto size = TestHelper::ProgramSize + sizeof(UploadColorProgramCommandId);
+			auto buf = new char[size];
+			memcpy(buf + sizeof(UploadColorProgramCommandId), program, TestHelper::ProgramSize);
+			buf[0] = UploadColorProgramCommandId;
+
+			auto hexString = TestHelper::HexStr(reinterpret_cast<unsigned char*>(buf), size);
+			//08070200e8036478824c046e828c
+			Assert::AreEqual(std::string("08070200e8036478824c046e828c"), hexString);
+
+			auto result = dispatcher.ReceivePacket(buf, 30);
+
+			Assert::IsNotNull(result);
+			auto message = result->GetMessage();
+
+			Assert::IsNotNull(message);
+			Assert::AreEqual(true, result->HasError());
 
 			delete result;
 			delete program;
@@ -172,7 +205,7 @@ namespace PwmLedUnitTests
 			
 			//Assert::AreEqual(std::string("08070200e8036478824c046e828c"), hexString);
 
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, size);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();
@@ -206,7 +239,7 @@ namespace PwmLedUnitTests
 			//05032d0000000000803f05000400060000001041000000410000e040030000004041000030410000204100000040
 			//Assert::AreEqual(std::string("05032b000000803f05000400060000001041000000410000e040030000004041000030410000204100000040"), hexString);
 
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, size);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();
@@ -233,7 +266,7 @@ namespace PwmLedUnitTests
 
 			char buf[2]{ GetColorProgramCommandId, 9 };
 
-			auto result = dispatcher.ReceivePacket(buf);
+			auto result = dispatcher.ReceivePacket(buf, 2);
 
 			Assert::IsNotNull(result);
 			auto message = result->GetMessage();

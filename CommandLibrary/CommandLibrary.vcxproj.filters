@@ -63,6 +63,9 @@
     <ClInclude Include="EepromProvider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataSizeProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandDispatcher.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EepromProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSizeProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

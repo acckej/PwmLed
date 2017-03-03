@@ -182,13 +182,13 @@ void ReceiveCommand()
 		char buffer[READ_BUFFER_SIZE];
 		auto size = BTserial.readBytes(buffer, READ_BUFFER_SIZE);
 
-		auto packet = DebugHelper::HexChar(static_cast<char*>(buffer), size);
+		/*auto packet = DebugHelper::HexChar(static_cast<char*>(buffer), size);
 		Serial.println(packet);
-		delete packet;
+		delete packet;*/
 
 		if(size > 0)
 		{				
-			auto result = _dispatcher.ReceivePacket(buffer);
+			auto result = _dispatcher.ReceivePacket(buffer, size);
 
 			if(result != nullptr)
 			{
@@ -243,10 +243,12 @@ void Work()
 {
 	if (_currentMode == SpeedColorMode)
 	{
+		//Serial.println("gsc");
 		GetSpeedAndColor();
 	}
 	else
 	{
+		//Serial.println("pcp");
 		PlayColorProgram();
 	}
 }
@@ -279,7 +281,7 @@ void PlayColorProgram()
 
 void GetSpeedAndColor()
 {
-	unsigned long currentTime = millis();
+	auto currentTime = millis();
 	_timestamp = currentTime;
 
 	//_currentSpeed = period / 1000 * _value * DISTANCE;	
@@ -287,12 +289,24 @@ void GetSpeedAndColor()
 		0 :
 		_distance / static_cast<double>(static_cast<double>(_msBetweenTicks) / MS_COEF) / static_cast<double>(2000);
 
+	/*Serial.println("speed");
+	Serial.println(_notMovingDelay);
+	Serial.println(_timestamp);
+	Serial.println(_lastUpdate);
+
+	Serial.println(_colorChangePeriod);
+	Serial.println(_blinkDelay);
+	Serial.println(_idleDelay);*/
+		
 	if (_currentSpeed > 0)
 	{
-		SetColor(_currentSpeed, COLOR_THRESHOLD);
+		//Serial.println("speed_not_zero");
+		SetColor(_lastUpdate, COLOR_THRESHOLD);
 	}
 	else
 	{
+		//Serial.println("speed_zero");
+		
 		analogWrite(RED_PIN, 255);
 		analogWrite(GREEN_PIN, 255);
 		analogWrite(BLUE_PIN, 0);

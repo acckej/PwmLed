@@ -50,7 +50,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\Acckej\Desktop\PwmLed\PwmLed;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\sglzk1gz.t2d\Micro Platforms\default\debuggers;C:\Users\Acckej\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Users\Acckej\Desktop\PwmLed\PwmLed;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src\utility;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src\utility;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\sglzk1gz.t2d\Micro Platforms\default\debuggers;C:\Users\Acckej\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\SoftwareSerial\src;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\EEPROM\src;C:\Program Files (x86)\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\sglzk1gz.t2d\Micro Platforms\default\debuggers;C:\Users\Acckej\Documents\Arduino\libraries;C:\Program Files (x86)\Arduino\hardware\tools\avr/avr/include/;C:\Program Files (x86)\Arduino\hardware\tools\avr//avr/include/avr/;C:\Program Files (x86)\Arduino\hardware\tools\avr/lib\gcc\avr\4.8.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>C:\Users\Acckej\Desktop\PwmLed\PwmLed\__vm\.PwmLed.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;F_CPU=16000000L;ARDUINO=10608;ARDUINO_AVR_UNO;ARDUINO_ARCH_AVR;__cplusplus=201103L;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -89,6 +89,7 @@
     <ClInclude Include="DataEntityFactory.h" />
     <ClInclude Include="DataEntityFactoryBase.h" />
     <ClInclude Include="DataSerializationHelper.h" />
+    <ClInclude Include="DataSizeProvider.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DeserializableEntityBase.h" />
     <ClInclude Include="EepromHelper.h" />
@@ -113,6 +114,7 @@
     <ClCompile Include="DataEntityFactory.cpp" />
     <ClCompile Include="DataEntityFactoryBase.cpp" />
     <ClCompile Include="DataSerializationHelper.cpp" />
+    <ClCompile Include="DataSizeProvider.cpp" />
     <ClCompile Include="DebugHelper.cpp" />
     <ClCompile Include="DeserializableEntityBase.cpp" />
     <ClCompile Include="EepromHelper.cpp" />

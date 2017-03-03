@@ -1,13 +1,12 @@
 #pragma once
-#include "CommandConstants.h"
+#include "DataSizeProvider.h"
 
-class SerializableEntityBase
+class SerializableEntityBase : public DataSizeProvider
 {
 public:
 	SerializableEntityBase();
 	virtual ~SerializableEntityBase();
-
-	virtual ArduinoSize GetDataSize();
+		
 	virtual void WriteDataToBuffer(char* buffer);
 };
 

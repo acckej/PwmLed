@@ -82,6 +82,8 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <..\PwmLed\DataEntityFactoryBase.h>
 #include <..\PwmLed\DataSerializationHelper.cpp>
 #include <..\PwmLed\DataSerializationHelper.h>
+#include <..\PwmLed\DataSizeProvider.cpp>
+#include <..\PwmLed\DataSizeProvider.h>
 #include <..\PwmLed\DebugHelper.cpp>
 #include <..\PwmLed\DebugHelper.h>
 #include <..\PwmLed\DeserializableEntityBase.cpp>

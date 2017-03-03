@@ -1,5 +1,7 @@
 #pragma once
-class DeserializableEntityBase
+#include "DataSizeProvider.h"
+
+class DeserializableEntityBase : public DataSizeProvider
 {
 public:
 	DeserializableEntityBase();

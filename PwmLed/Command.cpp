@@ -6,12 +6,12 @@
 
 Command::Command(char* buffer, DataEntityFactoryBase* dataEntityFactory)
 {
-	if(buffer == nullptr)
+	if (buffer == nullptr)
 	{
 		ErrorHandlingHelper::HandleError("Command data buffer is empty");
 	}
 
-	if(dataEntityFactory == nullptr)
+	if (dataEntityFactory == nullptr)
 	{
 		ErrorHandlingHelper::HandleError("Data entity factory pointer is null");
 	}
@@ -22,16 +22,11 @@ Command::Command(char* buffer, DataEntityFactoryBase* dataEntityFactory)
 }
 
 Command::~Command()
-{	
+{
 }
 
 DeserializableEntityBase* Command::GetData() const
 {
-	if(_data == nullptr)
-	{
-		ErrorHandlingHelper::HandleError("Data was not obtained");
-	}
-
 	return _data;
 }
 
