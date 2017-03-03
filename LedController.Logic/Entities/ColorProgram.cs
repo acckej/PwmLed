@@ -13,6 +13,12 @@ namespace LedController.Logic.Entities
 			_size = new ArduinoByte().Size + new ArduinoSize().Size;
 		}
 
+		public ColorProgram(ColorProgramStep[] steps)
+		{
+			_size = new ArduinoByte().Size + new ArduinoSize().Size;
+			_steps = steps.ToList();
+		}
+
 		public byte[] Serialize()
 		{
 			var buf = new byte[Size];

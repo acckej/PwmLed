@@ -81,7 +81,6 @@ void setup()
 	_currentColorProgram = EepromHelper::RestoreColorProgramFromEeprom();
 
 	attachInterrupt(0, Update, RISING);
-	//BTserial.begin(9600);
 	BTserial.begin(38400);
 	ErrorHandlingHelper::ErrorHandler = HandleError;
 
@@ -92,13 +91,7 @@ void loop()
 {	
 	ReceiveCommand();
 
-	digitalWrite(BLINK_PIN, HIGH);
-	delay(500);
-	digitalWrite(BLINK_PIN, LOW);
-	delay(500);
-	/*ReceiveCommand();
-
-	float voltage = GetVoltage();
+	/*float voltage = GetVoltage();
 	
 	if(voltage <= THRESHOLD_VOLTAGE)
 	{		
@@ -107,22 +100,9 @@ void loop()
 	else
 	{		
 		Work();
-	}
-
-	*/
-	//work();	
-}
-
-
-void Test2()
-{
-	delay(1000);
-	//digitalWrite(BLINK_PIN, HIGH);
-
-	ErrorHandlingHelper::HandleError("test message");	
-
-	delay(1000);
-	//digitalWrite(BLINK_PIN, LOW);
+	}*/
+	
+	Work();	
 }
 
 SerializableEntityBase* GetSysInfo()
@@ -160,24 +140,20 @@ void HandleError(char *message)
 void ApplySpeedColorProgram(DeserializableEntityBase* entity)
 {
 	auto updated = EepromHelper::SaveSpeedColorSettingsToEeprom(entity);
-
-	Serial.println("asc");
 	UpdateSpeedColorSettings(updated);
 
 	if (_currentSpeedColorProgram != nullptr)
 	{
 		delete _currentSpeedColorProgram;
 	}
-
-	Serial.println("upd2");
+	
 	_currentSpeedColorProgram = updated;
 }
 
 void UpdateSpeedColorSettings(SpeedColorProgramSettings* updated)
 {
 	if (updated != nullptr)
-	{
-		Serial.println("upd");
+	{		
 		_distance = updated->GetDistance();
 		_sigmaBlue = updated->GetSigmaBlue();
 		_sigmaGreen = updated->GetSigmaGreen();
@@ -228,6 +204,11 @@ void ReceiveCommand()
 	}
 }
 
+bool CommandAvailable()
+{
+	return BTserial.available();
+}
+
 void LowVoltageBlink()
 {
 	if(_blinkHigh == 255)
@@ -242,6 +223,12 @@ void LowVoltageBlink()
 	analogWrite(RED_PIN, _blinkHigh);
 	analogWrite(GREEN_PIN, 0);
 	analogWrite(BLUE_PIN, 0);
+
+	if(CommandAvailable())
+	{
+		TurnLightOff();
+		return;
+	}
 
 	delay(BLINK_DELAY);
 }
@@ -275,6 +262,12 @@ void PlayColorProgram()
 	{
 		auto step = _currentColorProgram->GetNextStep();
 
+		if(CommandAvailable())
+		{
+			TurnLightOff();
+			return;
+		}
+
 		analogWrite(RED_PIN, step.Red());
 		analogWrite(GREEN_PIN, step.Green());
 		analogWrite(BLUE_PIN, step.Blue());
@@ -287,7 +280,6 @@ void PlayColorProgram()
 void GetSpeedAndColor()
 {
 	unsigned long currentTime = millis();
-	//unsigned long period = currentTime - _timestamp;
 	_timestamp = currentTime;
 
 	//_currentSpeed = period / 1000 * _value * DISTANCE;	
@@ -305,14 +297,25 @@ void GetSpeedAndColor()
 		analogWrite(GREEN_PIN, 255);
 		analogWrite(BLUE_PIN, 0);
 
+		if(CommandAvailable())
+		{
+			TurnLightOff();
+			return;
+		}
+
 		delay(IDLE_DELAY);
 
-		analogWrite(RED_PIN, 0);
-		analogWrite(GREEN_PIN, 0);
-		analogWrite(BLUE_PIN, 0);
+		TurnLightOff();
 	}
 
 	delay(_colorChangePeriod);
+}
+
+void TurnLightOff()
+{
+	analogWrite(RED_PIN, 0);
+	analogWrite(GREEN_PIN, 0);
+	analogWrite(BLUE_PIN, 0);
 }
 
 void Update()

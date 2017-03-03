@@ -25,6 +25,15 @@
             tools:visibility="visible"
             android:visibility="invisible"
             android:enabled="false" />
+        <TextView
+            android:text="Presets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lblPresets" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ddlPresets" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

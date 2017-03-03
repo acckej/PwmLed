@@ -13,7 +13,7 @@ namespace LedController.Bluetooth
 	{
 		public const string DeviceName = "Kurka";
 		public const int Timeout = 2000;
-		public const int DataChunkWaitingTimeout = 2000;
+		public const int DataChunkWaitingTimeout = 4000;
 		public const int WorkerThreadWaitingInterval = 100;
 		public const int MinimumBytesNeeded = 2;
 
@@ -128,8 +128,7 @@ namespace LedController.Bluetooth
 			}
 
 			_signal.WaitOne(DataChunkWaitingTimeout);
-			//Thread.Sleep(DataChunkWaitingTimeout);
-
+			
 			lock (_accumulator)
 			{
 				return _accumulator.ToArray();

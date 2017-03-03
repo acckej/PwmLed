@@ -4,6 +4,8 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Views;
+using Android.Widget;
 using LedController.Controls;
 
 namespace LedController
@@ -28,7 +30,17 @@ namespace LedController
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
+			var layout = new LinearLayout(Context);
+			layout.LayoutDirection = LayoutDirection.Ltr;
 			var cPickerView = new RoundColorPickerView(Context, _initialColor);
+			var white = new Button(Context) {Text = "White"};
+			white.Click += White_Click;
+			var black = new Button(Context) {Text = "Black"};
+			black.Click += Black_Click;
+
+			layout.AddView(cPickerView);
+			layout.AddView(white);
+			layout.AddView(black);
 			
 			cPickerView.ColorChanged += delegate(object sender, ColorChangedEventArgs args)
 			{
@@ -36,8 +48,26 @@ namespace LedController
 
 				Dismiss();
 			};
-			SetContentView(cPickerView);
+			SetContentView(layout);
 			SetTitle("Pick a Color");
+		}
+
+		private void Black_Click(object sender, EventArgs e)
+		{
+			ColorChanged?.Invoke(this, new ColorChangedEventArgs
+			{
+				Color = Color.Black
+			});
+			Dismiss();
+		}
+
+		private void White_Click(object sender, EventArgs e)
+		{
+			ColorChanged?.Invoke(this, new ColorChangedEventArgs
+			{
+				Color	= Color.White
+			});
+			Dismiss();
 		}
 	}
 }

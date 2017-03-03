@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
@@ -23,11 +24,12 @@ namespace LedController.Fragments
 		private View _view;
 		private IList<ColorProgramStep> _steps;
 		private BluetoothManager _btManager;
+		private bool _firstLoad = true;
 
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
-			View view = inflater.Inflate(Resource.Layout.ColorProgram, null);
+			var view = inflater.Inflate(Resource.Layout.ColorProgram, null);
 			_view = view;
 			var list = view.FindViewById<ListView>(Resource.Id.lvColorProgram);
 			_view.SetBackgroundColor(new Color(0, 0, 0));
@@ -38,23 +40,8 @@ namespace LedController.Fragments
 				_steps = JsonConvert.DeserializeObject<ColorProgramStep[]>(saved);
 			}
 
-			_steps = _steps ?? new List<ColorProgramStep>
-			{
-				new ColorProgramStep
-				{
-					Blue = 23,
-					Red = 123,
-					Green = 234,
-					Delay = 1000
-				},
-				new ColorProgramStep
-				{
-					Blue = 123,
-					Red = 223,
-					Green = 134,
-					Delay = 500
-				}
-			};
+			_firstLoad = true;
+			_steps = _steps ?? PresetsManager.DefaultColorProgramSteps["Default"].ToList();
 
 			_listAdapter = new ColorProgramStepAdapter(_steps);
 			
@@ -74,7 +61,29 @@ namespace LedController.Fragments
 			var getButton = view.FindViewById<Button>(Resource.Id.btnGetProgram);
 			getButton.Click += GetButton_Click;
 
+			var presets = view.FindViewById<Spinner>(Resource.Id.ddlPresets);
+			var presetsAdapter = new ArrayAdapter(view.Context, Android.Resource.Layout.SimpleSpinnerDropDownItem, PresetsManager.DefaultColorProgramSteps.Keys.ToArray());
+
+			presets.ItemSelected += Presets_ItemSelected;
+			presets.Adapter = presetsAdapter;
+
 			return view;
+		}
+
+		private void Presets_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+		{
+			if (_firstLoad)
+			{
+				_firstLoad = false;
+				return;
+			}
+
+			var presets = (Spinner)sender;
+			var program = PresetsManager.DefaultColorProgramSteps[(string)presets.GetItemAtPosition(e.Position)];
+
+			var colorProgram = new ColorProgram(program);
+			_listAdapter.SetProgram(colorProgram);
+			SetNoStepsDefined(colorProgram.Steps.Length == 0);
 		}
 
 		private void GetButton_Click(object sender, EventArgs e)
