@@ -22,6 +22,10 @@
 
 #define READ_BUFFER_SIZE 512
 
+#define COLOR_CORRECTION_BLUE static_cast<double>(1)
+#define COLOR_CORRECTION_GREEN static_cast<double>(1.243)
+#define COLOR_CORRECTION_RED static_cast<double>(2.706)
+
 
 
 

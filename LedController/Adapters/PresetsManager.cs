@@ -9,7 +9,7 @@ namespace LedController.Adapters
 
 		static PresetsManager()
 		{
-			DefaultColorProgramSteps.Add("Police", new []
+			DefaultColorProgramSteps.Add("Police", new[]
 			{
 				new ColorProgramStep
 				{
@@ -109,12 +109,12 @@ namespace LedController.Adapters
 			DefaultColorProgramSteps.Add("Default", new[]
 			{
 				new ColorProgramStep
-			{
-				Blue = 23,
-				Red = 123,
-				Green = 234,
-				Delay = 1000
-			},
+				{
+					Blue = 23,
+					Red = 123,
+					Green = 234,
+					Delay = 1000
+				},
 				new ColorProgramStep
 				{
 					Blue = 123,
@@ -122,6 +122,31 @@ namespace LedController.Adapters
 					Green = 134,
 					Delay = 500
 				}
+			});
+
+			DefaultColorProgramSteps.Add("Red green blue", new[]
+			{
+				new ColorProgramStep
+				{
+					Blue = 0,
+					Red = 255,
+					Green = 0,
+					Delay = 2000
+				},
+				new ColorProgramStep
+				{
+					Blue = 0,
+					Red = 0,
+					Green = 255,
+					Delay = 2000
+				},
+				new ColorProgramStep
+				{
+					Blue = 255,
+					Red = 0,
+					Green = 0,
+					Delay = 2000
+				},
 			});
 		}
 	}

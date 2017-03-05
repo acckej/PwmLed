@@ -268,15 +268,44 @@ void PlayColorProgram()
 		{
 			TurnLightOff();
 			return;
-		}
+		}		
 
-		analogWrite(RED_PIN, step.Red());
-		analogWrite(GREEN_PIN, step.Green());
-		analogWrite(BLUE_PIN, step.Blue());
+		SetCorrectedColor(step.Red(), step.Green(), step.Blue());
 
 		delay(step.GetDelay());
 
 	} while (!_currentColorProgram->IsLastStep());
+}
+
+void SetCorrectedColor(double redSrc, double greenSrc, double blueSrc)
+{
+	auto red = redSrc * COLOR_CORRECTION_RED;
+	auto green = greenSrc * COLOR_CORRECTION_GREEN;
+	auto blue = blueSrc * COLOR_CORRECTION_BLUE;
+
+	auto max = red;
+	if (green > max)
+	{
+		max = green;
+	}
+	if (blue > max)
+	{
+		max = blue;
+	}
+
+	auto coef = max == 0 ? 0 : 255 / max;
+
+	red = red * coef;
+	green = green * coef;
+	blue = blue * coef;
+
+	Serial.println(static_cast<int>(red));
+	Serial.println(static_cast<int>(green));
+	Serial.println(static_cast<int>(blue));
+
+	analogWrite(RED_PIN, static_cast<int>(red));
+	analogWrite(GREEN_PIN, static_cast<int>(green));
+	analogWrite(BLUE_PIN, static_cast<int>(blue));
 }
 
 void GetSpeedAndColor()
@@ -346,44 +375,31 @@ void Update()
 
 void SetColor(double currentSpeed, double threshold)
 {
-	double sigmaGreen = sqrt(_sigmaGreen);
-	double sigmaRed = sqrt(_sigmaRed);
-	double sigmaBlue = sqrt(_sigmaBlue);
+	auto sigmaGreen = sqrt(_sigmaGreen);
+	auto sigmaRed = sqrt(_sigmaRed);
+	auto sigmaBlue = sqrt(_sigmaBlue);
 
 	double range = 255 - threshold;
 	
-	int red = threshold + range * (1 - Gaussian(sigmaRed, _muRed, currentSpeed));
-	int green = threshold + range * Gaussian(sigmaGreen, _muGreen, currentSpeed);
-	int blue = threshold + range * Gaussian(sigmaBlue, _muBlue, currentSpeed);
+	auto red = threshold + range * (1 - Gaussian(sigmaRed, _muRed, currentSpeed));
+	auto green = threshold + range * Gaussian(sigmaGreen, _muGreen, currentSpeed);
+	auto blue = threshold + range * Gaussian(sigmaBlue, _muBlue, currentSpeed);
 
-	if (blue > 255)
-	{
-		blue = 255;
-	}
-	else if (blue < 0)
+	
+	if (blue < 0)
 	{
 		blue = 0;
 	}
-	if (red > 255)
-	{
-		red = 255;
-	}
-	else if (red < 0)
+	if (red < 0)
 	{
 		red = 0;
 	}
-	if (green > 255)
-	{
-		green = 255;
-	}
-	else if (green < 0)
+	if (green < 0)
 	{
 		green = 0;
 	}
 
-	analogWrite(RED_PIN, red);
-	analogWrite(GREEN_PIN, green);
-	analogWrite(BLUE_PIN, blue);
+	SetCorrectedColor(red, green, blue);
 }
 
 
