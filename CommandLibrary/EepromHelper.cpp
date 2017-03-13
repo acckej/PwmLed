@@ -9,7 +9,7 @@ ColorProgram* EepromHelper::SaveColorProgramToEeprom(DeserializableEntityBase* e
 
 	if (size > 0)
 	{
-		char buffer[256];
+		char buffer[BUF_SIZE];
 		data->WriteDataToBuffer(buffer);
 
 		for (int i = 0; i < size; i++)
@@ -32,7 +32,7 @@ SpeedColorProgramSettings* EepromHelper::SaveSpeedColorSettingsToEeprom(Deserial
 
 	if (size > 0)
 	{
-		char buffer[256];
+		char buffer[BUF_SIZE];
 		data->WriteDataToBuffer(buffer);
 
 		for (int i = 0; i < size; i++)
@@ -44,7 +44,7 @@ SpeedColorProgramSettings* EepromHelper::SaveSpeedColorSettingsToEeprom(Deserial
 
 		return data;
 	}
-	
+
 	return nullptr;
 }
 
@@ -52,14 +52,14 @@ SpeedColorProgramSettings* EepromHelper::RestoreSpeedColorFromEeprom()
 {
 	auto size = EEPROMReadInt(SPEEDCOLOR_FLAG_ADDRESS);
 
-	if(size == 0)
+	if (size == 0)
 	{
 		return nullptr;
 	}
 
-	char buffer[256];
-	
-	for(int i = 0; i < size; i++)
+	char buffer[BUF_SIZE];
+
+	for (int i = 0; i < size; i++)
 	{
 		buffer[i] = EepromProvider::Read(SPEED_COLOR_EEPROM_SEGMENT + i);
 	}
@@ -78,7 +78,7 @@ ColorProgram* EepromHelper::RestoreColorProgramFromEeprom()
 		return nullptr;
 	}
 
-	char buffer[256];
+	char buffer[BUF_SIZE];
 
 	for (int i = 0; i < size; i++)
 	{

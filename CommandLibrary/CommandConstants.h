@@ -1,6 +1,7 @@
 #pragma once
 
 #define Test
+#define UnoMega
 
 #ifdef Test
 
@@ -12,9 +13,9 @@ typedef __int16 ArduinoSize;
 
 #ifdef Arduino
 
-typedef __int16 ArduinoInt;
-typedef float ArduinoDouble;
-typedef __int16 ArduinoSize;
+typedef int ArduinoInt;
+typedef double ArduinoDouble;
+typedef int ArduinoSize;
 
 #endif
 
@@ -47,8 +48,20 @@ const ArduinoDouble MuBlue = 0;
 const ArduinoDouble SigmaGreen = 4;
 const ArduinoDouble SigmaRed = 4;
 const ArduinoDouble SigmaBlue = 2;
+#ifdef UnoMega
 
 #define COLORPROGRAM_FLAG_ADDRESS 512
+#define BUF_SIZE 256
+
+#endif
+
+#ifdef ProMini
+
+#define COLORPROGRAM_FLAG_ADDRESS 512
+#define BUF_SIZE 256
+
+#endif
+
 #define COLOR_PROGRAM_EEPROM_SEGMENT COLORPROGRAM_FLAG_ADDRESS + sizeof(ArduinoInt)
 
 #define SPEEDCOLOR_FLAG_ADDRESS 0

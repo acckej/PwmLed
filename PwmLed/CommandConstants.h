@@ -1,6 +1,7 @@
 #pragma once
 
 #define Arduino
+#define ProMini
 
 #ifdef Test
 
@@ -48,8 +49,20 @@ const ArduinoDouble SigmaGreen = 4;
 const ArduinoDouble SigmaRed = 4;
 const ArduinoDouble SigmaBlue = 2;
 
+#ifdef UnoMega
 
 #define COLORPROGRAM_FLAG_ADDRESS 512
+#define BUF_SIZE 256
+
+#endif
+
+#ifdef ProMini
+
+#define COLORPROGRAM_FLAG_ADDRESS 512
+#define BUF_SIZE 256
+
+#endif
+
 #define COLOR_PROGRAM_EEPROM_SEGMENT COLORPROGRAM_FLAG_ADDRESS + sizeof(ArduinoInt)
 
 #define SPEEDCOLOR_FLAG_ADDRESS 0

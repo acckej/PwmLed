@@ -53,7 +53,7 @@ void(*resetFunc) (void) = nullptr;
 
 void setup() 
 {	
-	Serial.begin(9600);
+	//Serial.begin(9600);
 
 	auto savedSpeedColor = EepromHelper::RestoreSpeedColorFromEeprom();
 	UpdateSpeedColorSettings(savedSpeedColor);
@@ -91,7 +91,7 @@ void loop()
 {	
 	ReceiveCommand();
 
-	/*float voltage = GetVoltage();
+	float voltage = GetVoltage();
 	
 	if(voltage <= THRESHOLD_VOLTAGE)
 	{		
@@ -100,9 +100,12 @@ void loop()
 	else
 	{		
 		Work();
-	}*/
-	
-	Work();	
+	}	
+
+	/*digitalWrite(13, HIGH);
+	delay(1000);
+	digitalWrite(13, LOW);
+	delay(1000);*/
 }
 
 SerializableEntityBase* GetSysInfo()
@@ -126,15 +129,13 @@ void ApplyColorProgram(DeserializableEntityBase* entity)
 
 void HandleError(char *message)
 {		
-	/*CommandResult result(ErrorCommandId, message, strlen(message), true);
+	CommandResult result(ErrorCommandId, message, strlen(message), true);
 	auto buffer = new char[result.GetDataSize()];
 	result.WriteDataToBuffer(buffer);
-	BTserial.write(buffer, result.GetDataSize());
-		
-	Serial.write(buffer, result.GetDataSize());
+	BTserial.write(buffer, result.GetDataSize());	
 
 	delete buffer;
-	resetFunc();*/
+	resetFunc();
 }
 
 void ApplySpeedColorProgram(DeserializableEntityBase* entity)
@@ -214,11 +215,13 @@ void LowVoltageBlink()
 	if(_blinkHigh == 255)
 	{
 		_blinkHigh = 0;
+		digitalWrite(13, HIGH);
 	}
 	else
 	{
 		_blinkHigh = 255;
-	}
+		digitalWrite(13, LOW);
+	}	
 
 	analogWrite(RED_PIN, _blinkHigh);
 	analogWrite(GREEN_PIN, 0);
@@ -242,13 +245,11 @@ float GetVoltage()
 void Work()
 {
 	if (_currentMode == SpeedColorMode)
-	{
-		//Serial.println("gsc");
+	{		
 		GetSpeedAndColor();
 	}
 	else
-	{
-		//Serial.println("pcp");
+	{		
 		PlayColorProgram();
 	}
 }
@@ -299,9 +300,9 @@ void SetCorrectedColor(double redSrc, double greenSrc, double blueSrc)
 	green = green * coef;
 	blue = blue * coef;
 
-	Serial.println(static_cast<int>(red));
+	/*Serial.println(static_cast<int>(red));
 	Serial.println(static_cast<int>(green));
-	Serial.println(static_cast<int>(blue));
+	Serial.println(static_cast<int>(blue));*/
 
 	analogWrite(RED_PIN, static_cast<int>(red));
 	analogWrite(GREEN_PIN, static_cast<int>(green));
@@ -312,30 +313,17 @@ void GetSpeedAndColor()
 {
 	auto currentTime = millis();
 	_timestamp = currentTime;
-
-	//_currentSpeed = period / 1000 * _value * DISTANCE;	
+	
 	_currentSpeed = _timestamp - _lastUpdate > _notMovingDelay ?
 		0 :
-		_distance / static_cast<double>(static_cast<double>(_msBetweenTicks) / MS_COEF) / static_cast<double>(2000);
+		_distance / static_cast<double>(static_cast<double>(_msBetweenTicks) / MS_COEF) / static_cast<double>(2000);	
 
-	/*Serial.println("speed");
-	Serial.println(_notMovingDelay);
-	Serial.println(_timestamp);
-	Serial.println(_lastUpdate);
-
-	Serial.println(_colorChangePeriod);
-	Serial.println(_blinkDelay);
-	Serial.println(_idleDelay);*/
-		
 	if (_currentSpeed > 0)
-	{
-		//Serial.println("speed_not_zero");
-		SetColor(_lastUpdate, COLOR_THRESHOLD);
+	{		
+		SetColor(_currentSpeed, COLOR_THRESHOLD);
 	}
 	else
 	{
-		//Serial.println("speed_zero");
-		
 		analogWrite(RED_PIN, 255);
 		analogWrite(GREEN_PIN, 255);
 		analogWrite(BLUE_PIN, 0);
@@ -379,7 +367,7 @@ void SetColor(double currentSpeed, double threshold)
 	auto sigmaRed = sqrt(_sigmaRed);
 	auto sigmaBlue = sqrt(_sigmaBlue);
 
-	double range = 255 - threshold;
+	auto range = 255 - threshold;
 	
 	auto red = threshold + range * (1 - Gaussian(sigmaRed, _muRed, currentSpeed));
 	auto green = threshold + range * Gaussian(sigmaGreen, _muGreen, currentSpeed);
